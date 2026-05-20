@@ -96,7 +96,7 @@ A professional 1-2 paragraph closing statement from management.
 Keep the tone professional, informative, and owner-focused. Use specific numbers throughout.`
 
   const response = await anthropic.messages.create({
-    model: 'claude-sonnet-4-5',
+    model: 'claude-sonnet-4-6',
     max_tokens: 4096,
     messages: [{ role: 'user', content: prompt }],
   })
