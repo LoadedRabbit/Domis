@@ -20,6 +20,7 @@ const SECTION_META: Record<string, { color: string; dot: string }> = {
   'TENANT UPDATES':            { color: '#a78bfa', dot: '#a78bfa' },
   'RECOMMENDATIONS':           { color: '#34d399', dot: '#34d399' },
   'RECOMMENDATIONS FOR NEXT MONTH': { color: '#34d399', dot: '#34d399' },
+  'LOOKING AHEAD':             { color: '#60a5fa', dot: '#60a5fa' },
   'CLOSING STATEMENT':         { color: '#94a3b8', dot: '#94a3b8' },
 }
 

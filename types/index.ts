@@ -28,6 +28,16 @@ export interface Report {
   updated_at: string
 }
 
+export type PaymentStatus = 'Paid' | 'Outstanding' | 'Partial' | 'Vacant'
+
+export interface RentRollEntry {
+  unit: string
+  tenant: string
+  rent: string
+  status: PaymentStatus
+  notes: string
+}
+
 export interface ReportFormData {
   building_name: string
   building_address: string
@@ -50,6 +60,10 @@ export interface ReportFormData {
   maintenance_issues: string
   tenant_issues: string
   notes: string
+  // Rent roll
+  rent_roll: RentRollEntry[]
+  // Next month
+  next_month_outlook: string
 }
 
 export const MONTHS = [

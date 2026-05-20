@@ -5,14 +5,23 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
   ArrowLeft, Building2, DollarSign, Home, FileText,
-  Loader2, AlertCircle, ChevronRight, Zap,
+  Loader2, AlertCircle, ChevronRight, Zap, Plus, X,
 } from 'lucide-react'
-import type { Building, ReportFormData, Report } from '@/types'
+import type { Building, ReportFormData, Report, RentRollEntry } from '@/types'
 import { MONTHS } from '@/types'
 import { formatCurrency, formatMonth } from '@/lib/utils'
 
 const currentYear = new Date().getFullYear()
 const currentMonth = new Date().getMonth() + 1
+
+const STATUS_COLORS: Record<string, string> = {
+  Paid: '#10b981',
+  Outstanding: '#ef4444',
+  Partial: '#f59e0b',
+  Vacant: '#64748b',
+}
+
+const BLANK_ENTRY: RentRollEntry = { unit: '', tenant: '', rent: '', status: 'Paid', notes: '' }
 
 export default function BuildingPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -39,6 +48,8 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
     maintenance_issues: '',
     tenant_issues: '',
     notes: '',
+    rent_roll: [],
+    next_month_outlook: '',
   })
 
   useEffect(() => {
@@ -113,6 +124,13 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
     }
   }
 
+  function updateRentRollEntry(idx: number, field: keyof RentRollEntry, value: string) {
+    setForm(f => ({
+      ...f,
+      rent_roll: f.rent_roll.map((e, i) => i === idx ? { ...e, [field]: value } : e),
+    }))
+  }
+
   const inputClass = 'w-full bg-[#0a0c10] border border-[#1e2535] rounded-lg text-sm text-[#e2e8f0] placeholder-[#64748b] px-3 py-2.5 focus:outline-none focus:border-[#3b82f6]/50 focus:ring-1 focus:ring-[#3b82f6]/20 transition-all font-mono'
   const textareaClass = `${inputClass} resize-none`
 
@@ -135,6 +153,18 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
   const occupancyPreview = form.vacant_units !== '' && building
     ? Math.round(((building.total_units - parseInt(form.vacant_units)) / building.total_units) * 100)
     : null
+
+  const rentRollTotals = form.rent_roll.reduce(
+    (acc, e) => {
+      const r = parseFloat(e.rent) || 0
+      if (e.status === 'Paid')        { acc.collected += r;   acc.paidCount++ }
+      else if (e.status === 'Outstanding') { acc.outstanding += r; acc.outstandingCount++ }
+      else if (e.status === 'Partial')     { acc.outstanding += r; acc.partialCount++ }
+      else if (e.status === 'Vacant')      { acc.vacantCount++ }
+      return acc
+    },
+    { collected: 0, outstanding: 0, paidCount: 0, outstandingCount: 0, partialCount: 0, vacantCount: 0 }
+  )
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -207,6 +237,111 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
                     </select>
                   </div>
                 </div>
+              </div>
+
+              {/* Rent Roll */}
+              <div className="bg-[#131822] border border-[#1e2535] rounded-lg p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-[9px] font-mono text-[#64748b] uppercase tracking-widest">Rent Roll</p>
+                  <button
+                    type="button"
+                    onClick={() => setForm(f => ({ ...f, rent_roll: [...f.rent_roll, { ...BLANK_ENTRY }] }))}
+                    className="flex items-center gap-1 text-[10px] font-mono text-[#3b82f6] hover:text-[#60a5fa] transition-colors"
+                  >
+                    <Plus size={10} />
+                    Add Unit
+                  </button>
+                </div>
+
+                {form.rent_roll.length === 0 ? (
+                  <p className="text-xs text-[#64748b] text-center py-2 italic">
+                    No units added. Click "Add Unit" to build the rent roll.
+                  </p>
+                ) : (
+                  <>
+                    {/* Column headers */}
+                    <div className="grid grid-cols-12 gap-1.5 px-0.5">
+                      {['Unit', 'Tenant', 'Rent', 'Status', 'Notes', ''].map((h, i) => (
+                        <span key={i} className={`text-[9px] font-mono text-[#64748b] uppercase tracking-widest ${
+                          i === 0 ? 'col-span-2' : i === 1 ? 'col-span-3' : i === 2 ? 'col-span-2' : i === 3 ? 'col-span-2' : i === 4 ? 'col-span-2' : 'col-span-1'
+                        }`}>{h}</span>
+                      ))}
+                    </div>
+
+                    {/* Rows */}
+                    {form.rent_roll.map((entry, idx) => (
+                      <div key={idx} className="grid grid-cols-12 gap-1.5 items-center">
+                        <input
+                          type="text" placeholder="1A"
+                          value={entry.unit}
+                          onChange={e => updateRentRollEntry(idx, 'unit', e.target.value)}
+                          className={`col-span-2 ${inputClass} py-2 text-xs`}
+                        />
+                        <input
+                          type="text" placeholder="Tenant"
+                          value={entry.tenant}
+                          onChange={e => updateRentRollEntry(idx, 'tenant', e.target.value)}
+                          className={`col-span-3 ${inputClass} py-2 text-xs`}
+                        />
+                        <div className="col-span-2 relative">
+                          <DollarSign size={10} className="absolute left-2 top-1/2 -translate-y-1/2 text-[#64748b]" />
+                          <input
+                            type="number" step="0.01" min="0" placeholder="0"
+                            value={entry.rent}
+                            onChange={e => updateRentRollEntry(idx, 'rent', e.target.value)}
+                            className={`${inputClass} py-2 text-xs pl-5`}
+                          />
+                        </div>
+                        <div className="col-span-2 relative">
+                          <select
+                            value={entry.status}
+                            onChange={e => updateRentRollEntry(idx, 'status', e.target.value)}
+                            className={`${inputClass} py-2 text-xs`}
+                            style={{ color: STATUS_COLORS[entry.status] }}
+                          >
+                            {(['Paid', 'Outstanding', 'Partial', 'Vacant'] as const).map(s => (
+                              <option key={s} value={s} style={{ color: STATUS_COLORS[s] }}>{s}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <input
+                          type="text" placeholder="Notes"
+                          value={entry.notes}
+                          onChange={e => updateRentRollEntry(idx, 'notes', e.target.value)}
+                          className={`col-span-2 ${inputClass} py-2 text-xs`}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setForm(f => ({ ...f, rent_roll: f.rent_roll.filter((_, i) => i !== idx) }))}
+                          className="col-span-1 flex items-center justify-center text-[#64748b] hover:text-[#ef4444] transition-colors h-8"
+                        >
+                          <X size={13} />
+                        </button>
+                      </div>
+                    ))}
+
+                    {/* Totals */}
+                    <div className="flex items-center justify-between bg-[#0a0c10] border border-[#1e2535] rounded-lg px-3 py-2.5 mt-1">
+                      <div className="flex items-center gap-3 text-[9px] font-mono text-[#64748b] uppercase tracking-widest">
+                        <span>{form.rent_roll.length} units</span>
+                        {rentRollTotals.vacantCount > 0 && <span className="text-[#64748b]">{rentRollTotals.vacantCount} vacant</span>}
+                        {rentRollTotals.partialCount > 0 && <span className="text-[#f59e0b]">{rentRollTotals.partialCount} partial</span>}
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          <div className="text-[9px] font-mono text-[#64748b] uppercase tracking-widest">Collected</div>
+                          <div className="text-xs font-bold font-mono text-[#10b981]">{formatCurrency(rentRollTotals.collected)}</div>
+                        </div>
+                        {rentRollTotals.outstanding > 0 && (
+                          <div className="text-right">
+                            <div className="text-[9px] font-mono text-[#64748b] uppercase tracking-widest">Outstanding</div>
+                            <div className="text-xs font-bold font-mono text-[#ef4444]">{formatCurrency(rentRollTotals.outstanding)}</div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Financial data */}
@@ -426,6 +561,24 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
                   onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
                   className={textareaClass}
                 />
+              </div>
+
+              {/* Next Month Outlook */}
+              <div className="bg-[#131822] border border-[#1e2535] rounded-lg p-4 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Zap size={11} className="text-[#3b82f6]" />
+                  <p className="text-[9px] font-mono text-[#64748b] uppercase tracking-widest">Next Month Outlook</p>
+                </div>
+                <textarea
+                  rows={4}
+                  placeholder={`Planned maintenance or repairs\nExpected vacancies or move-outs\nPlanned rent increases\nAny known issues or risks`}
+                  value={form.next_month_outlook}
+                  onChange={e => setForm(f => ({ ...f, next_month_outlook: e.target.value }))}
+                  className={textareaClass}
+                />
+                <p className="text-[9px] text-[#64748b] font-mono">
+                  The AI will include a dedicated "Looking Ahead" section based on these inputs.
+                </p>
               </div>
 
               {error && (

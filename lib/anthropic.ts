@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { MONTHS } from '@/types'
+import type { RentRollEntry } from '@/types'
 
 interface ReportInput {
   buildingName: string
@@ -20,6 +21,8 @@ interface ReportInput {
   maintenanceIssues: string
   tenantIssues: string
   notes: string
+  rentRoll: RentRollEntry[]
+  nextMonthOutlook: string
 }
 
 function formatCurrency(amount: number): string {
@@ -45,23 +48,29 @@ export async function generateOwnerReport(data: ReportInput): Promise<string> {
 
   const ytdNOI = data.ytdRent - data.ytdExpenses
 
+  const rentRollCollected = data.rentRoll.reduce((s, e) => e.status === 'Paid' ? s + (parseFloat(e.rent) || 0) : s, 0)
+  const rentRollOutstanding = data.rentRoll.reduce((s, e) => (e.status === 'Outstanding' || e.status === 'Partial') ? s + (parseFloat(e.rent) || 0) : s, 0)
+
+  const rentRollBlock = data.rentRoll.length > 0
+    ? `RENT ROLL (${data.rentRoll.length} units):
+${data.rentRoll.map(e =>
+      `- Unit ${e.unit}${e.tenant ? ` (${e.tenant})` : ''}: ${formatCurrency(parseFloat(e.rent) || 0)}/mo — ${e.status}${e.notes ? ` | ${e.notes}` : ''}`
+    ).join('\n')}
+Collected: ${formatCurrency(rentRollCollected)} | Outstanding/Partial: ${formatCurrency(rentRollOutstanding)}`
+    : 'RENT ROLL: Not provided.'
+
   const prompt = `You are a property manager at Kinyu Realty writing a monthly owner report. Be concise, specific, and professional.
 
 ${data.buildingName} | ${data.address} | ${MONTHS[data.month - 1]} ${data.year}
 
 FINANCIALS:
-- Rent Collected: ${formatCurrency(data.totalRent)}
-- Total Expenses: ${formatCurrency(data.totalExpenses)}
-- Net Operating Income: ${formatCurrency(data.netIncome)}
-- Late Payments Collected: ${formatCurrency(data.latePayments)}
-- Management Fee: ${formatCurrency(data.managementFee)}
-
-YTD (Year-to-Date):
+- Rent Collected: ${formatCurrency(data.totalRent)} | Expenses: ${formatCurrency(data.totalExpenses)} | NOI: ${formatCurrency(data.netIncome)}
+- Late Payments Collected: ${formatCurrency(data.latePayments)} | Management Fee: ${formatCurrency(data.managementFee)}
 - YTD Rent: ${formatCurrency(data.ytdRent)} | YTD Expenses: ${formatCurrency(data.ytdExpenses)} | YTD NOI: ${formatCurrency(ytdNOI)}
 
-OCCUPANCY:
-- ${data.totalUnits - data.vacantUnits}/${data.totalUnits} units occupied (${occupancyRate}%)
-- ${data.vacantUnits} vacant unit(s)
+OCCUPANCY: ${data.totalUnits - data.vacantUnits}/${data.totalUnits} units occupied (${occupancyRate}%) — ${data.vacantUnits} vacant
+
+${rentRollBlock}
 
 TENANT STATUS:
 - Outstanding Balances: ${formatCurrency(data.outstandingBalances)}
@@ -72,6 +81,8 @@ OPERATIONS:
 - Tenant Issues: ${data.tenantIssues.trim() || 'None reported.'}
 - Manager Notes: ${data.notes.trim() || 'None.'}
 
+NEXT MONTH OUTLOOK: ${data.nextMonthOutlook.trim() || 'No specific items noted.'}
+
 Write a professional owner report using these ## sections:
 ## EXECUTIVE SUMMARY
 ## FINANCIAL SUMMARY
@@ -79,9 +90,10 @@ Write a professional owner report using these ## sections:
 ## MAINTENANCE SUMMARY
 ## TENANT UPDATES
 ## RECOMMENDATIONS
+## LOOKING AHEAD
 ## CLOSING STATEMENT
 
-Reference specific numbers throughout. Each section should be 2-4 sentences or a short bullet list. Mention late payments, management fee, outstanding balances, and YTD figures naturally where relevant.`
+Reference specific numbers throughout. Each section: 2-4 sentences or a short bullet list. In LOOKING AHEAD, frame the next month outlook inputs as action items and things the owner should be aware of.`
 
   const stream = anthropic.messages.stream({
     model: 'claude-sonnet-4-6',

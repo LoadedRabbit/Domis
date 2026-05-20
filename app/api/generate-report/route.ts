@@ -33,6 +33,8 @@ export async function POST(req: NextRequest) {
       maintenance_issues,
       tenant_issues,
       notes,
+      rent_roll,
+      next_month_outlook,
     } = body
 
     if (!building_name || !report_month || !report_year) {
@@ -61,6 +63,8 @@ export async function POST(req: NextRequest) {
       maintenanceIssues: maintenance_issues || '',
       tenantIssues: tenant_issues || '',
       notes: notes || '',
+      rentRoll: Array.isArray(rent_roll) ? rent_roll : [],
+      nextMonthOutlook: next_month_outlook || '',
     })
 
     const supabase = createServerClient()
