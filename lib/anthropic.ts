@@ -37,69 +37,29 @@ export async function generateOwnerReport(data: ReportInput): Promise<string> {
     ? Math.round(((data.totalUnits - data.vacantUnits) / data.totalUnits) * 100)
     : 0
 
-  const prompt = `You are a senior property management professional writing a formal monthly owner report for Kinyu Realty and Management Corp. Write a comprehensive, polished report that owners will find valuable and professional.
+  const prompt = `You are a property manager at Kinyu Realty writing a monthly owner report. Be concise, specific, and professional.
 
-PROPERTY INFORMATION
-Building: ${data.buildingName}
-Address: ${data.address}
-Report Period: ${MONTHS[data.month - 1]} ${data.year}
+${data.buildingName} | ${data.address} | ${MONTHS[data.month - 1]} ${data.year}
+Rent: ${formatCurrency(data.totalRent)} | Expenses: ${formatCurrency(data.totalExpenses)} | NOI: ${formatCurrency(data.netIncome)}
+Occupancy: ${data.totalUnits - data.vacantUnits}/${data.totalUnits} units (${occupancyRate}%)
+Maintenance: ${data.maintenanceIssues.trim() || 'None reported.'}
+Tenant updates: ${data.tenantIssues.trim() || 'None reported.'}
+Notes: ${data.notes.trim() || 'None.'}
 
-FINANCIAL PERFORMANCE
-- Total Rent Collected: ${formatCurrency(data.totalRent)}
-- Total Expenses: ${formatCurrency(data.totalExpenses)}
-- Net Operating Income: ${formatCurrency(data.netIncome)}
-
-OCCUPANCY STATUS
-- Total Units: ${data.totalUnits}
-- Vacant Units: ${data.vacantUnits}
-- Occupied Units: ${data.totalUnits - data.vacantUnits}
-- Occupancy Rate: ${occupancyRate}%
-
-MAINTENANCE INCIDENTS THIS PERIOD
-${data.maintenanceIssues.trim() || 'No maintenance issues reported this period.'}
-
-TENANT UPDATES
-${data.tenantIssues.trim() || 'No tenant issues reported this period.'}
-
-MANAGER NOTES
-${data.notes.trim() || 'No additional notes from management.'}
-
----
-
-Generate a professional monthly owner report with the following exact sections. Use clear markdown-style headers (##) for each section. Be specific, data-driven, and professional:
-
+Write a professional owner report using these ## sections:
 ## EXECUTIVE SUMMARY
-Write 2-3 paragraphs giving a high-level overview of this month's performance. Reference specific numbers. Highlight the most important developments.
-
 ## FINANCIAL SUMMARY
-Provide a detailed financial breakdown. Include:
-- Income analysis (rent collected vs potential)
-- Expense breakdown context
-- Net operating income analysis
-- Commentary on financial health
-
 ## OCCUPANCY REPORT
-Current occupancy status, vacancy details, and any tenant movement. If there are vacancies, discuss marketing strategy.
-
 ## MAINTENANCE SUMMARY
-Summary of all maintenance activities performed or outstanding. Note any recurring issues or preventative actions taken.
-
 ## TENANT UPDATES
-Tenant relations summary including payment status, any concerns, move-ins/move-outs, and community matters.
-
-## RECOMMENDATIONS FOR NEXT MONTH
-Provide 4-5 specific, actionable bullet-point recommendations based on this month's data.
-
+## RECOMMENDATIONS
 ## CLOSING STATEMENT
-A professional 1-2 paragraph closing statement from management.
 
-Keep the tone professional, informative, and owner-focused. Use specific numbers throughout.`
+Reference specific numbers throughout. Each section should be 2-4 sentences or a short bullet list.`
 
-  // Stream the response so the connection stays alive while Claude writes.
-  // The Edge runtime enforces its own wall-clock timeout — no manual abort needed.
   const stream = anthropic.messages.stream({
     model: 'claude-sonnet-4-6',
-    max_tokens: 4096,
+    max_tokens: 1500,
     messages: [{ role: 'user', content: prompt }],
   })
 
