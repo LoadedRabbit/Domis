@@ -1,27 +1,27 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-bg-base: #07080d;
-  --color-bg-surface: #0d0f18;
-  --color-bg-surface-2: #131726;
-  --color-bg-surface-3: #1a1f32;
-  --color-border: #1e2438;
-  --color-border-bright: #2a3050;
-  --color-text-primary: #c8d3e8;
-  --color-text-secondary: #7a8aaa;
-  --color-text-muted: #3d4a66;
-  --color-accent: #00d4aa;
-  --color-accent-dim: #00856a;
-  --color-accent-glow: rgba(0, 212, 170, 0.15);
-  --color-cyan: #22d3ee;
-  --color-green: #22c55e;
-  --color-green-dim: #166534;
+  /* Domis Design System */
+  --color-bg-base: #0a0c10;
+  --color-bg-surface: #10141c;
+  --color-bg-surface-2: #131822;
+  --color-bg-surface-3: #1a1f2e;
+  --color-border: #1e2535;
+  --color-border-bright: #2a3350;
+  --color-text-primary: #e2e8f0;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+  --color-accent: #3b82f6;
+  --color-accent-dim: #1d4ed8;
+  --color-accent-glow: rgba(59, 130, 246, 0.15);
+  --color-green: #10b981;
+  --color-green-dim: #065f46;
   --color-red: #ef4444;
   --color-red-dim: #7f1d1d;
   --color-amber: #f59e0b;
   --color-amber-dim: #78350f;
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-dm-sans);
+  --font-mono: var(--font-space-mono);
 }
 
 :root {
@@ -35,26 +35,26 @@
 body {
   background-color: var(--color-bg-base);
   color: var(--color-text-primary);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Tactical grid background overlay */
+/* Subtle grid background */
 .grid-bg {
   background-image:
-    linear-gradient(rgba(0, 212, 170, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 212, 170, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
 /* Glow effects */
 .glow-accent {
-  box-shadow: 0 0 20px rgba(0, 212, 170, 0.2), 0 0 40px rgba(0, 212, 170, 0.05);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.2), 0 0 40px rgba(59, 130, 246, 0.05);
 }
 
 .glow-text {
-  text-shadow: 0 0 20px rgba(0, 212, 170, 0.4);
+  text-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
 }
 
 /* Status indicator pulse */
