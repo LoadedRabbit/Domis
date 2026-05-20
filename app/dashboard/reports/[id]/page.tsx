@@ -82,12 +82,22 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
   const { id } = use(params)
   const [report, setReport] = useState<Report | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [downloading, setDownloading] = useState(false)
 
   useEffect(() => {
     fetch(`/api/reports/${id}`)
-      .then(r => r.json())
-      .then(data => { setReport(data); setLoading(false) })
+      .then(async r => {
+        if (!r.ok) {
+          let msg = `Error ${r.status}`
+          try { const b = await r.json(); msg = b.error || msg } catch { /* non-JSON */ }
+          throw new Error(msg)
+        }
+        return r.json()
+      })
+      .then((data: Report) => setReport(data))
+      .catch(err => setError(err instanceof Error ? err.message : 'Failed to load report'))
+      .finally(() => setLoading(false))
   }, [id])
 
   async function handleDownload() {
@@ -101,6 +111,14 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
     return (
       <div className="p-6 flex items-center justify-center h-64">
         <Loader2 size={20} className="animate-spin text-[#7a8aaa]" />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="p-6 flex items-center gap-2 text-sm text-[#ef4444]">
+        <span className="font-mono">Error:</span> {error}
       </div>
     )
   }

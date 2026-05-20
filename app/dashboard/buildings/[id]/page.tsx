@@ -37,17 +37,22 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
 
   useEffect(() => {
     async function load() {
-      const [bRes, rRes] = await Promise.all([
-        fetch(`/api/buildings/${id}`),
-        fetch(`/api/reports?building_id=${id}`),
-      ])
-      if (bRes.ok) {
-        const b: Building = await bRes.json()
-        setBuilding(b)
-        setForm(f => ({ ...f, building_name: b.name, building_address: b.address }))
+      try {
+        const [bRes, rRes] = await Promise.all([
+          fetch(`/api/buildings/${id}`),
+          fetch(`/api/reports?building_id=${id}`),
+        ])
+        if (bRes.ok) {
+          const b: Building = await bRes.json()
+          setBuilding(b)
+          setForm(f => ({ ...f, building_name: b.name, building_address: b.address }))
+        }
+        if (rRes.ok) setBuildingReports(await rRes.json())
+      } catch {
+        // Network error — building will show not-found state
+      } finally {
+        setLoading(false)
       }
-      if (rRes.ok) setBuildingReports(await rRes.json())
-      setLoading(false)
     }
     load()
   }, [id])
