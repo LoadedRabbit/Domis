@@ -9,8 +9,14 @@ interface ReportInput {
   totalRent: number
   totalExpenses: number
   netIncome: number
+  latePayments: number
+  managementFee: number
   vacantUnits: number
   totalUnits: number
+  outstandingBalances: number
+  upcomingExpirations: string
+  ytdRent: number
+  ytdExpenses: number
   maintenanceIssues: string
   tenantIssues: string
   notes: string
@@ -37,14 +43,34 @@ export async function generateOwnerReport(data: ReportInput): Promise<string> {
     ? Math.round(((data.totalUnits - data.vacantUnits) / data.totalUnits) * 100)
     : 0
 
+  const ytdNOI = data.ytdRent - data.ytdExpenses
+
   const prompt = `You are a property manager at Kinyu Realty writing a monthly owner report. Be concise, specific, and professional.
 
 ${data.buildingName} | ${data.address} | ${MONTHS[data.month - 1]} ${data.year}
-Rent: ${formatCurrency(data.totalRent)} | Expenses: ${formatCurrency(data.totalExpenses)} | NOI: ${formatCurrency(data.netIncome)}
-Occupancy: ${data.totalUnits - data.vacantUnits}/${data.totalUnits} units (${occupancyRate}%)
-Maintenance: ${data.maintenanceIssues.trim() || 'None reported.'}
-Tenant updates: ${data.tenantIssues.trim() || 'None reported.'}
-Notes: ${data.notes.trim() || 'None.'}
+
+FINANCIALS:
+- Rent Collected: ${formatCurrency(data.totalRent)}
+- Total Expenses: ${formatCurrency(data.totalExpenses)}
+- Net Operating Income: ${formatCurrency(data.netIncome)}
+- Late Payments Collected: ${formatCurrency(data.latePayments)}
+- Management Fee: ${formatCurrency(data.managementFee)}
+
+YTD (Year-to-Date):
+- YTD Rent: ${formatCurrency(data.ytdRent)} | YTD Expenses: ${formatCurrency(data.ytdExpenses)} | YTD NOI: ${formatCurrency(ytdNOI)}
+
+OCCUPANCY:
+- ${data.totalUnits - data.vacantUnits}/${data.totalUnits} units occupied (${occupancyRate}%)
+- ${data.vacantUnits} vacant unit(s)
+
+TENANT STATUS:
+- Outstanding Balances: ${formatCurrency(data.outstandingBalances)}
+- Upcoming Lease Expirations: ${data.upcomingExpirations.trim() || 'None reported.'}
+
+OPERATIONS:
+- Maintenance: ${data.maintenanceIssues.trim() || 'None reported.'}
+- Tenant Issues: ${data.tenantIssues.trim() || 'None reported.'}
+- Manager Notes: ${data.notes.trim() || 'None.'}
 
 Write a professional owner report using these ## sections:
 ## EXECUTIVE SUMMARY
@@ -55,11 +81,11 @@ Write a professional owner report using these ## sections:
 ## RECOMMENDATIONS
 ## CLOSING STATEMENT
 
-Reference specific numbers throughout. Each section should be 2-4 sentences or a short bullet list.`
+Reference specific numbers throughout. Each section should be 2-4 sentences or a short bullet list. Mention late payments, management fee, outstanding balances, and YTD figures naturally where relevant.`
 
   const stream = anthropic.messages.stream({
     model: 'claude-sonnet-4-6',
-    max_tokens: 1500,
+    max_tokens: 2000,
     messages: [{ role: 'user', content: prompt }],
   })
 

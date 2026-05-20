@@ -29,7 +29,13 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
     report_year: currentYear,
     total_rent_collected: '',
     total_expenses: '',
+    late_payments: '',
+    management_fee: '',
     vacant_units: '',
+    outstanding_balances: '',
+    upcoming_expirations: '',
+    ytd_rent: '',
+    ytd_expenses: '',
     maintenance_issues: '',
     tenant_issues: '',
     notes: '',
@@ -77,7 +83,12 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
           total_units: building?.total_units ?? 0,
           total_rent_collected: parseFloat(form.total_rent_collected),
           total_expenses: parseFloat(form.total_expenses),
+          late_payments: parseFloat(form.late_payments) || 0,
+          management_fee: parseFloat(form.management_fee) || 0,
           vacant_units: parseInt(form.vacant_units),
+          outstanding_balances: parseFloat(form.outstanding_balances) || 0,
+          ytd_rent: parseFloat(form.ytd_rent) || 0,
+          ytd_expenses: parseFloat(form.ytd_expenses) || 0,
         }),
       })
 
@@ -245,6 +256,39 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
                 )}
               </div>
 
+              {/* Additional financial fields */}
+              <div className="bg-[#131822] border border-[#1e2535] rounded-lg p-4 space-y-3">
+                <p className="text-[9px] font-mono text-[#64748b] uppercase tracking-widest">
+                  Additional Financial Details
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[10px] font-mono text-[#94a3b8] uppercase tracking-widest mb-1.5">Late Payments Collected</label>
+                    <div className="relative">
+                      <DollarSign size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
+                      <input
+                        type="number" step="0.01" min="0" placeholder="0.00"
+                        value={form.late_payments}
+                        onChange={e => setForm(f => ({ ...f, late_payments: e.target.value }))}
+                        className={`${inputClass} pl-7`}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-mono text-[#94a3b8] uppercase tracking-widest mb-1.5">Management Fee Charged</label>
+                    <div className="relative">
+                      <DollarSign size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
+                      <input
+                        type="number" step="0.01" min="0" placeholder="0.00"
+                        value={form.management_fee}
+                        onChange={e => setForm(f => ({ ...f, management_fee: e.target.value }))}
+                        className={`${inputClass} pl-7`}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Occupancy */}
               <div>
                 <label className="block text-[10px] font-mono text-[#94a3b8] uppercase tracking-widest mb-1.5">
@@ -269,6 +313,83 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
                       />
                     </div>
                     <span className="text-[10px] font-mono text-[#3b82f6]">{occupancyPreview}% occupied</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Tenant status */}
+              <div className="bg-[#131822] border border-[#1e2535] rounded-lg p-4 space-y-3">
+                <p className="text-[9px] font-mono text-[#64748b] uppercase tracking-widest">
+                  Tenant Status
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[10px] font-mono text-[#94a3b8] uppercase tracking-widest mb-1.5">Outstanding Balances</label>
+                    <div className="relative">
+                      <DollarSign size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
+                      <input
+                        type="number" step="0.01" min="0" placeholder="0.00"
+                        value={form.outstanding_balances}
+                        onChange={e => setForm(f => ({ ...f, outstanding_balances: e.target.value }))}
+                        className={`${inputClass} pl-7`}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-mono text-[#94a3b8] uppercase tracking-widest mb-1.5">Upcoming Lease Expirations</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Unit 3A — Jun 30, Unit 7B — Jul 15"
+                      value={form.upcoming_expirations}
+                      onChange={e => setForm(f => ({ ...f, upcoming_expirations: e.target.value }))}
+                      className={inputClass}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Year to date */}
+              <div className="bg-[#131822] border border-[#1e2535] rounded-lg p-4 space-y-3">
+                <p className="text-[9px] font-mono text-[#64748b] uppercase tracking-widest">
+                  Year-to-Date Comparison
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[10px] font-mono text-[#94a3b8] uppercase tracking-widest mb-1.5">YTD Rent Collected</label>
+                    <div className="relative">
+                      <DollarSign size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
+                      <input
+                        type="number" step="0.01" min="0" placeholder="0.00"
+                        value={form.ytd_rent}
+                        onChange={e => setForm(f => ({ ...f, ytd_rent: e.target.value }))}
+                        className={`${inputClass} pl-7`}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-mono text-[#94a3b8] uppercase tracking-widest mb-1.5">YTD Expenses</label>
+                    <div className="relative">
+                      <DollarSign size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
+                      <input
+                        type="number" step="0.01" min="0" placeholder="0.00"
+                        value={form.ytd_expenses}
+                        onChange={e => setForm(f => ({ ...f, ytd_expenses: e.target.value }))}
+                        className={`${inputClass} pl-7`}
+                      />
+                    </div>
+                  </div>
+                </div>
+                {form.ytd_rent && form.ytd_expenses && (
+                  <div className="flex items-center justify-between bg-[#0a0c10] border border-[#1e2535] rounded-lg p-3">
+                    <div className="flex items-center gap-2">
+                      <Zap size={11} className="text-[#64748b]" />
+                      <span className="text-[10px] font-mono text-[#64748b] uppercase tracking-widest">YTD Net Operating Income</span>
+                    </div>
+                    <span className={`text-base font-bold font-mono ${
+                      parseFloat(form.ytd_rent) - parseFloat(form.ytd_expenses) >= 0 ? 'text-[#10b981]' : 'text-[#ef4444]'
+                    }`}>
+                      {formatCurrency(parseFloat(form.ytd_rent) - parseFloat(form.ytd_expenses))}
+                    </span>
                   </div>
                 )}
               </div>

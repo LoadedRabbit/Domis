@@ -33,9 +33,20 @@ export interface ReportFormData {
   building_address: string
   report_month: number
   report_year: number
+  // Financial
   total_rent_collected: string
   total_expenses: string
+  late_payments: string
+  management_fee: string
+  // Occupancy
   vacant_units: string
+  // Tenant status
+  outstanding_balances: string
+  upcoming_expirations: string
+  // Year to date
+  ytd_rent: string
+  ytd_expenses: string
+  // Narrative
   maintenance_issues: string
   tenant_issues: string
   notes: string
