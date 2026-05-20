@@ -3,6 +3,7 @@ import { auth } from '@clerk/nextjs/server'
 import { createServerClient } from '@/lib/supabase-server'
 import { generateOwnerReport } from '@/lib/anthropic'
 
+export const runtime = 'edge'
 export const maxDuration = 60
 
 export async function POST(req: NextRequest) {

@@ -95,25 +95,15 @@ A professional 1-2 paragraph closing statement from management.
 
 Keep the tone professional, informative, and owner-focused. Use specific numbers throughout.`
 
-  // Abort after 55 s so the route can return a JSON error before Vercel's 60 s hard kill
-  const controller = new AbortController()
-  const timeout = setTimeout(() => controller.abort(), 55_000)
+  // Stream the response so the connection stays alive while Claude writes.
+  // The Edge runtime enforces its own wall-clock timeout — no manual abort needed.
+  const stream = anthropic.messages.stream({
+    model: 'claude-sonnet-4-6',
+    max_tokens: 4096,
+    messages: [{ role: 'user', content: prompt }],
+  })
 
-  let response
-  try {
-    response = await anthropic.messages.create(
-      { model: 'claude-sonnet-4-6', max_tokens: 4096, messages: [{ role: 'user', content: prompt }] },
-      { signal: controller.signal },
-    )
-  } catch (err) {
-    if ((err as { name?: string }).name === 'AbortError') {
-      throw new Error('Report generation timed out. Please try again.')
-    }
-    throw err
-  } finally {
-    clearTimeout(timeout)
-  }
-
-  const content = response.content[0]
+  const message = await stream.finalMessage()
+  const content = message.content[0]
   return content.type === 'text' ? content.text : ''
 }

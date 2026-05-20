@@ -1,7 +1,1 @@
-{
-  "functions": {
-    "app/api/generate-report/route.ts": {
-      "maxDuration": 60
-    }
-  }
-}
+{}

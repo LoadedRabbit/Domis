@@ -34,16 +34,13 @@ export default function DashboardPage() {
 
         const buildingsData: Building[] = await bRes.json()
 
-        // Auto-seed buildings on first load if table is empty
+        // Auto-seed buildings on first load if table is empty.
+        // Always re-fetch after the seed attempt — handles both the seeded:true
+        // case and the seeded:false case (buildings existed but returned empty).
         if (buildingsData.length === 0) {
-          const seedRes = await fetch('/api/seed', { method: 'POST' })
-          if (seedRes.ok) {
-            const seeded = await seedRes.json()
-            if (seeded.seeded) {
-              const fresh = await fetch('/api/buildings')
-              if (fresh.ok) setBuildings(await fresh.json())
-            }
-          }
+          await fetch('/api/seed', { method: 'POST' })
+          const fresh = await fetch('/api/buildings')
+          if (fresh.ok) setBuildings(await fresh.json())
         } else {
           setBuildings(buildingsData)
         }
