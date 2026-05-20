@@ -7,5 +7,12 @@ export function createServerClient() {
   if (!supabaseServiceKey) throw new Error('SUPABASE_SERVICE_ROLE_KEY environment variable is not set')
   // Strip any accidentally-included path suffix (e.g. user copied /rest/v1 from Supabase docs)
   supabaseUrl = supabaseUrl.replace(/\/rest\/v1\/?$/, '').replace(/\/$/, '')
-  return createClient(supabaseUrl, supabaseServiceKey)
+  // Disable session/token handling so the service role key is used as-is for every request
+  return createClient(supabaseUrl, supabaseServiceKey, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+    },
+  })
 }

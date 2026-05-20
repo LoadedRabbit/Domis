@@ -1,6 +1,3 @@
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// All database access uses the service role key via createServerClient.
+// This file re-exports it so legacy/future imports of '@/lib/supabase' still work.
+export { createServerClient as createClient } from './supabase-server'
