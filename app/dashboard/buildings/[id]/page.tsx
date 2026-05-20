@@ -77,8 +77,17 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
       })
 
       if (!res.ok) {
-        const data = await res.json()
-        throw new Error(data.error || 'Failed to generate report')
+        let errorMsg = `Server error (${res.status})`
+        try {
+          const data = await res.json()
+          errorMsg = data.error || errorMsg
+        } catch {
+          // Vercel timeout or gateway error — response was not JSON
+          if (res.status === 504 || res.status === 524) {
+            errorMsg = 'Report generation timed out. Please try again.'
+          }
+        }
+        throw new Error(errorMsg)
       }
 
       const report: Report = await res.json()

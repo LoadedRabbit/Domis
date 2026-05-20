@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
     }
 
     const netIncome = Number(total_rent_collected) - Number(total_expenses)
+    const totalUnitsNum = Number(total_units) || 0
 
     const generatedReport = await generateOwnerReport({
       buildingName: building_name,
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
       totalExpenses: Number(total_expenses),
       netIncome,
       vacantUnits: Number(vacant_units),
-      totalUnits: Number(total_units) || 0,
+      totalUnits: totalUnitsNum,
       maintenanceIssues: maintenance_issues || '',
       tenantIssues: tenant_issues || '',
       notes: notes || '',
@@ -58,7 +59,9 @@ export async function POST(req: NextRequest) {
         report_year: Number(report_year),
         total_rent_collected: Number(total_rent_collected),
         total_expenses: Number(total_expenses),
+        net_income: netIncome,
         vacant_units: Number(vacant_units),
+        total_units: totalUnitsNum,
         maintenance_issues: maintenance_issues || '',
         tenant_issues: tenant_issues || '',
         notes: notes || '',
@@ -73,9 +76,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(data)
   } catch (err) {
     console.error('[/api/generate-report POST]', err)
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : 'Failed to generate report' },
-      { status: 500 }
-    )
+    const message =
+      err instanceof Error
+        ? err.message
+        : typeof (err as { error?: { message?: string } })?.error?.message === 'string'
+          ? (err as { error: { message: string } }).error.message
+          : 'Failed to generate report'
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
