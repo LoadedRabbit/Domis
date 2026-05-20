@@ -6,6 +6,8 @@ import { generateOwnerReport } from '@/lib/anthropic'
 export const runtime = 'nodejs'
 export const maxDuration = 60
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 export async function POST(req: NextRequest) {
   try {
     const { userId } = await auth()
@@ -53,7 +55,7 @@ export async function POST(req: NextRequest) {
     const { data, error } = await supabase
       .from('reports')
       .insert({
-        building_id: building_id || null,
+        building_id: (building_id && UUID_RE.test(String(building_id))) ? building_id : null,
         building_name,
         building_address,
         report_month: Number(report_month),
