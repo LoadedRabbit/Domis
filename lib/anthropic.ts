@@ -1,10 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { MONTHS } from '@/types'
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY!,
-})
-
 interface ReportInput {
   buildingName: string
   address: string
@@ -29,6 +25,14 @@ function formatCurrency(amount: number): string {
 }
 
 export async function generateOwnerReport(data: ReportInput): Promise<string> {
+  // Instantiate inside the function so missing env var throws at request time,
+  // not at module load time (which would crash the entire serverless function).
+  const apiKey = process.env.ANTHROPIC_API_KEY
+  if (!apiKey) {
+    throw new Error('ANTHROPIC_API_KEY environment variable is not set')
+  }
+  const anthropic = new Anthropic({ apiKey })
+
   const occupancyRate = data.totalUnits > 0
     ? Math.round(((data.totalUnits - data.vacantUnits) / data.totalUnits) * 100)
     : 0
