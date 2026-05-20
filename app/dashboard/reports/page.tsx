@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
   FileText, Building2, TrendingUp, TrendingDown,
-  Search, ChevronRight, Plus,
+  Search, ChevronRight, Plus, AlertCircle,
 } from 'lucide-react'
 import type { Report } from '@/types'
 import { formatCurrency, formatMonth } from '@/lib/utils'
@@ -13,11 +13,20 @@ export default function ReportsPage() {
   const [reports, setReports] = useState<Report[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/reports')
-      .then(r => r.json())
-      .then(data => { setReports(data); setLoading(false) })
+      .then(async r => {
+        if (!r.ok) {
+          const body = await r.json().catch(() => ({ error: `HTTP ${r.status}` }))
+          throw new Error(body.error || `API returned ${r.status}`)
+        }
+        return r.json()
+      })
+      .then((data: Report[]) => setReports(data))
+      .catch(err => setError(err instanceof Error ? err.message : 'Failed to load reports'))
+      .finally(() => setLoading(false))
   }, [])
 
   const filtered = reports.filter(r =>
@@ -49,6 +58,16 @@ export default function ReportsPage() {
           New Report
         </Link>
       </div>
+
+      {error && (
+        <div className="flex items-start gap-2 bg-[#7f1d1d]/20 border border-[#ef4444]/30 rounded-lg p-3 mb-6">
+          <AlertCircle size={14} className="text-[#ef4444] flex-shrink-0 mt-0.5" />
+          <div>
+            <span className="text-xs font-mono text-[#ef4444]">Failed to load reports: {error}</span>
+            <p className="text-[10px] text-[#7a8aaa] mt-0.5">Check that Supabase environment variables are set correctly in Vercel.</p>
+          </div>
+        </div>
+      )}
 
       {/* Summary stats */}
       <div className="grid grid-cols-4 gap-3 mb-6">

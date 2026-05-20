@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
   Building2, FileText, Users, TrendingUp,
-  ChevronRight, Plus, Clock, Zap,
+  ChevronRight, Plus, Clock, Zap, AlertCircle,
 } from 'lucide-react'
 import type { Building, Report } from '@/types'
 import { formatCurrency, formatMonth } from '@/lib/utils'
@@ -13,16 +13,47 @@ export default function DashboardPage() {
   const [buildings, setBuildings] = useState<Building[]>([])
   const [recentReports, setRecentReports] = useState<Report[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
-      const [bRes, rRes] = await Promise.all([
-        fetch('/api/buildings'),
-        fetch('/api/reports?limit=5'),
-      ])
-      if (bRes.ok) setBuildings(await bRes.json())
-      if (rRes.ok) setRecentReports(await rRes.json())
-      setLoading(false)
+      try {
+        const [bRes, rRes] = await Promise.all([
+          fetch('/api/buildings'),
+          fetch('/api/reports?limit=5'),
+        ])
+
+        if (!bRes.ok) {
+          const body = await bRes.json().catch(() => ({ error: `HTTP ${bRes.status}` }))
+          throw new Error(body.error || `Buildings API returned ${bRes.status}`)
+        }
+        if (!rRes.ok) {
+          const body = await rRes.json().catch(() => ({ error: `HTTP ${rRes.status}` }))
+          throw new Error(body.error || `Reports API returned ${rRes.status}`)
+        }
+
+        const buildingsData: Building[] = await bRes.json()
+
+        // Auto-seed buildings on first load if table is empty
+        if (buildingsData.length === 0) {
+          const seedRes = await fetch('/api/seed', { method: 'POST' })
+          if (seedRes.ok) {
+            const seeded = await seedRes.json()
+            if (seeded.seeded) {
+              const fresh = await fetch('/api/buildings')
+              if (fresh.ok) setBuildings(await fresh.json())
+            }
+          }
+        } else {
+          setBuildings(buildingsData)
+        }
+
+        setRecentReports(await rRes.json())
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load data')
+      } finally {
+        setLoading(false)
+      }
     }
     load()
   }, [])
@@ -39,6 +70,16 @@ export default function DashboardPage() {
         <h1 className="text-2xl font-bold text-[#c8d3e8] tracking-tight">Operations Center</h1>
         <p className="text-sm text-[#7a8aaa] mt-0.5">Kinyu Realty and Management Corp</p>
       </div>
+
+      {error && (
+        <div className="flex items-start gap-2 bg-[#7f1d1d]/20 border border-[#ef4444]/30 rounded-lg p-3 mb-6">
+          <AlertCircle size={14} className="text-[#ef4444] flex-shrink-0 mt-0.5" />
+          <div>
+            <span className="text-xs font-mono text-[#ef4444]">Failed to load data: {error}</span>
+            <p className="text-[10px] text-[#7a8aaa] mt-0.5">Check that Supabase environment variables are set correctly in Vercel.</p>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-4 gap-3 mb-8">
         {[

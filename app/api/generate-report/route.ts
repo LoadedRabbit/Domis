@@ -6,32 +6,32 @@ import { generateOwnerReport } from '@/lib/anthropic'
 export const maxDuration = 60
 
 export async function POST(req: NextRequest) {
-  const { userId } = await auth()
-  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
-  const body = await req.json()
-  const {
-    building_id,
-    building_name,
-    building_address,
-    report_month,
-    report_year,
-    total_rent_collected,
-    total_expenses,
-    vacant_units,
-    total_units,
-    maintenance_issues,
-    tenant_issues,
-    notes,
-  } = body
-
-  if (!building_name || !report_month || !report_year) {
-    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
-  }
-
-  const netIncome = Number(total_rent_collected) - Number(total_expenses)
-
   try {
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    const body = await req.json()
+    const {
+      building_id,
+      building_name,
+      building_address,
+      report_month,
+      report_year,
+      total_rent_collected,
+      total_expenses,
+      vacant_units,
+      total_units,
+      maintenance_issues,
+      tenant_issues,
+      notes,
+    } = body
+
+    if (!building_name || !report_month || !report_year) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    }
+
+    const netIncome = Number(total_rent_collected) - Number(total_expenses)
+
     const generatedReport = await generateOwnerReport({
       buildingName: building_name,
       address: building_address,
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
     if (error) throw new Error(error.message)
     return NextResponse.json(data)
   } catch (err) {
-    console.error('Report generation error:', err)
+    console.error('[/api/generate-report POST]', err)
     return NextResponse.json(
       { error: err instanceof Error ? err.message : 'Failed to generate report' },
       { status: 500 }
