@@ -17,8 +17,8 @@
   --color-red:          #c45c5c;
   --color-red-dim:      #2e1414;
   --color-amber:        #d48f4a;
-  --font-display:       var(--font-cormorant);
-  --font-sans:          var(--font-dm-mono);
+  --font-display:       var(--font-playfair);
+  --font-sans:          var(--font-plus-jakarta);
   --font-mono:          var(--font-dm-mono);
 }
 
@@ -29,13 +29,13 @@
 body {
   background-color: #0b0c09;
   color: #eae6d6;
-  font-family: var(--font-dm-mono), 'Courier New', monospace;
+  font-family: var(--font-plus-jakarta), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 .font-display {
-  font-family: var(--font-cormorant), Georgia, 'Times New Roman', serif;
+  font-family: var(--font-playfair), Georgia, 'Times New Roman', serif;
 }
 
 /* ── Backgrounds ─────────────────────────────────────────────────────────── */
@@ -118,7 +118,7 @@ body {
 /* ── Report content ──────────────────────────────────────────────────────── */
 
 .report-content h2 {
-  font-family: var(--font-cormorant), Georgia, serif;
+  font-family: var(--font-playfair), Georgia, serif;
   font-size: 20px;
   font-weight: 500;
   font-style: italic;

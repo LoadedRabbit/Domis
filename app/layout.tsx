@@ -1,13 +1,19 @@
 import type { Metadata } from 'next'
-import { Cormorant_Garamond, DM_Mono } from 'next/font/google'
+import { Playfair_Display, Plus_Jakarta_Sans, DM_Mono } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
 import './globals.css'
 
-const cormorant = Cormorant_Garamond({
-  variable: '--font-cormorant',
+const playfair = Playfair_Display({
+  variable: '--font-playfair',
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+})
+
+const plusJakarta = Plus_Jakarta_Sans({
+  variable: '--font-plus-jakarta',
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
-  style: ['normal', 'italic'],
 })
 
 const dmMono = DM_Mono({
@@ -24,7 +30,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${cormorant.variable} ${dmMono.variable} h-full`}>
+      <html lang="en" className={`${playfair.variable} ${plusJakarta.variable} ${dmMono.variable} h-full`}>
         <body className="h-full">{children}</body>
       </html>
     </ClerkProvider>
