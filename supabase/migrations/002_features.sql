@@ -17,7 +17,7 @@ $$ LANGUAGE plpgsql;
 -- ============================================================
 CREATE TABLE IF NOT EXISTS tenants (
   id            UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  building_id   UUID REFERENCES buildings(id) ON DELETE CASCADE NOT NULL,
+  building_id   BIGINT REFERENCES buildings(id) ON DELETE CASCADE NOT NULL,
   unit_number   TEXT NOT NULL,
   full_name     TEXT NOT NULL,
   email         TEXT NOT NULL,
@@ -40,7 +40,7 @@ CREATE INDEX IF NOT EXISTS idx_tenants_clerk_user_id ON tenants(clerk_user_id);
 CREATE TABLE IF NOT EXISTS communication_threads (
   id          UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   tenant_id   UUID REFERENCES tenants(id) ON DELETE CASCADE NOT NULL,
-  building_id UUID REFERENCES buildings(id) ON DELETE CASCADE NOT NULL,
+  building_id BIGINT REFERENCES buildings(id) ON DELETE CASCADE NOT NULL,
   subject     TEXT NOT NULL,
   urgency     TEXT NOT NULL DEFAULT 'medium' CHECK (urgency IN ('low','medium','high')),
   status      TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open','resolved')),
@@ -70,7 +70,7 @@ CREATE INDEX IF NOT EXISTS idx_comm_messages_thread_id ON communication_messages
 CREATE TABLE IF NOT EXISTS maintenance_requests (
   id                 UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   tenant_id          UUID REFERENCES tenants(id) ON DELETE CASCADE NOT NULL,
-  building_id        UUID REFERENCES buildings(id) ON DELETE CASCADE NOT NULL,
+  building_id        BIGINT REFERENCES buildings(id) ON DELETE CASCADE NOT NULL,
   description        TEXT NOT NULL,
   location_in_unit   TEXT DEFAULT '',
   urgency            TEXT NOT NULL DEFAULT 'medium' CHECK (urgency IN ('low','medium','high')),
@@ -96,7 +96,7 @@ CREATE INDEX IF NOT EXISTS idx_maint_category    ON maintenance_requests(ai_cate
 CREATE TABLE IF NOT EXISTS rent_ledger (
   id          UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   tenant_id   UUID REFERENCES tenants(id) ON DELETE CASCADE NOT NULL,
-  building_id UUID REFERENCES buildings(id) ON DELETE CASCADE NOT NULL,
+  building_id BIGINT REFERENCES buildings(id) ON DELETE CASCADE NOT NULL,
   due_date    DATE NOT NULL,
   amount_due  NUMERIC(10,2) NOT NULL DEFAULT 0,
   status      TEXT NOT NULL DEFAULT 'unpaid' CHECK (status IN ('paid','unpaid')),

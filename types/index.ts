@@ -1,5 +1,5 @@
 export interface Building {
-  id: string
+  id: number
   name: string
   address: string
   total_units: number
@@ -75,7 +75,7 @@ export const MONTHS = [
 
 export interface Tenant {
   id: string
-  building_id: string
+  building_id: number
   unit_number: string
   full_name: string
   email: string
@@ -98,7 +98,7 @@ export type SenderRole = 'tenant' | 'manager'
 export interface CommunicationThread {
   id: string
   tenant_id: string
-  building_id: string
+  building_id: number
   subject: string
   urgency: Urgency
   status: ThreadStatus
@@ -133,7 +133,7 @@ export type MaintenanceCategory = 'Emergency' | 'Routine'
 export interface MaintenanceRequest {
   id: string
   tenant_id: string
-  building_id: string
+  building_id: number
   description: string
   location_in_unit: string
   urgency: Urgency
@@ -157,7 +157,7 @@ export type LedgerStatus = 'paid' | 'unpaid'
 export interface RentLedgerEntry {
   id: string
   tenant_id: string
-  building_id: string
+  building_id: number
   due_date: string
   amount_due: number
   status: LedgerStatus
