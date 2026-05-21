@@ -17,7 +17,6 @@ export default async function Root() {
         .from('tenants')
         .select('id')
         .eq('clerk_user_id', userId)
-        .eq('is_active', true)
         .maybeSingle()
       if (data) destination = '/portal'
     } catch {
