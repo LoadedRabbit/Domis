@@ -86,31 +86,31 @@ export async function downloadReportAsPDF(report: {
   doc.setFontSize(8.5)
   tc(col.light)
   doc.text('PROPERTY MANAGEMENT', ML, y)
-  y += 22
+  y += 28
 
   doc.setFont('helvetica', 'bold')
-  doc.setFontSize(26)
+  doc.setFontSize(28)
   tc(col.dark)
   doc.text('Monthly Owner Report', ML, y)
-  y += 8
+  y += 38
 
   doc.setFont('helvetica', 'normal')
-  doc.setFontSize(13.5)
+  doc.setFontSize(13)
   tc(col.gray)
   const period = `${MONTHS[report.report_month - 1]} ${report.report_year}`
   doc.text(`${report.building_name}  ·  ${period}`, ML, y)
-  y += 5
+  y += 20
 
-  doc.setFontSize(10.5)
+  doc.setFontSize(10)
   tc(col.light)
   doc.text(report.building_address, ML, y)
-  y += 20
+  y += 30
 
   // Thick divider
   dc(col.dark)
   doc.setLineWidth(2.5)
   doc.line(ML, y, PW - MR, y)
-  y += 30
+  y += 28
 
   // ── FINANCIAL SUMMARY BOX ──────────────────────────────────────────────────
   const boxH = 76
