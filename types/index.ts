@@ -70,3 +70,116 @@ export const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
 ]
+
+// ── Tenant ────────────────────────────────────────────────────────────────
+
+export interface Tenant {
+  id: string
+  building_id: string
+  unit_number: string
+  full_name: string
+  email: string
+  phone: string
+  monthly_rent: number
+  lease_start: string | null
+  lease_end: string | null
+  clerk_user_id: string | null
+  created_at: string
+  updated_at: string
+  building?: Building
+}
+
+// ── Communications ────────────────────────────────────────────────────────
+
+export type Urgency = 'low' | 'medium' | 'high'
+export type ThreadStatus = 'open' | 'resolved'
+export type SenderRole = 'tenant' | 'manager'
+
+export interface CommunicationThread {
+  id: string
+  tenant_id: string
+  building_id: string
+  subject: string
+  urgency: Urgency
+  status: ThreadStatus
+  created_at: string
+  updated_at: string
+  tenant?: Tenant
+  building?: Building
+  latest_message?: CommunicationMessage
+  message_count?: number
+}
+
+export interface CommunicationMessage {
+  id: string
+  thread_id: string
+  sender_role: SenderRole
+  sender_name: string
+  body: string
+  created_at: string
+}
+
+// ── Maintenance ───────────────────────────────────────────────────────────
+
+export type MaintenanceStatus =
+  | 'submitted'
+  | 'reviewed'
+  | 'contractor_contacted'
+  | 'in_progress'
+  | 'completed'
+
+export type MaintenanceCategory = 'Emergency' | 'Routine'
+
+export interface MaintenanceRequest {
+  id: string
+  tenant_id: string
+  building_id: string
+  description: string
+  location_in_unit: string
+  urgency: Urgency
+  ai_category: MaintenanceCategory
+  status: MaintenanceStatus
+  photo_url: string
+  contractor_name: string
+  contractor_contact: string
+  scheduled_date: string | null
+  manager_notes: string
+  created_at: string
+  updated_at: string
+  tenant?: Tenant
+  building?: Building
+}
+
+// ── Rent ──────────────────────────────────────────────────────────────────
+
+export type LedgerStatus = 'paid' | 'unpaid'
+
+export interface RentLedgerEntry {
+  id: string
+  tenant_id: string
+  building_id: string
+  due_date: string
+  amount_due: number
+  status: LedgerStatus
+  paid_date: string | null
+  created_at: string
+  updated_at: string
+  tenant?: Tenant
+  building?: Building
+  days_overdue?: number
+}
+
+export type NoticeType = 'first_notice' | 'second_notice' | 'lawyer_referral'
+
+export interface RentNotice {
+  id: string
+  ledger_id: string
+  tenant_id: string
+  notice_type: NoticeType
+  generated_text: string
+  sent_at: string | null
+  created_at: string
+  updated_at: string
+  ledger?: RentLedgerEntry
+  tenant?: Tenant
+}
