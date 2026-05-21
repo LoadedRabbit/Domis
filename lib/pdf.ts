@@ -1,5 +1,37 @@
 'use client'
 
+import jsPDF from 'jspdf'
+
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+]
+
+const SECTION_COLORS: Record<string, [number, number, number]> = {
+  'EXECUTIVE SUMMARY':               [59,  130, 246],
+  'FINANCIAL SUMMARY':               [16,  185, 129],
+  'OCCUPANCY REPORT':                [96,  165, 250],
+  'MAINTENANCE SUMMARY':             [245, 158, 11],
+  'TENANT UPDATES':                  [167, 139, 250],
+  'RECOMMENDATIONS':                 [52,  211, 153],
+  'RECOMMENDATIONS FOR NEXT MONTH':  [52,  211, 153],
+  'LOOKING AHEAD':                   [96,  165, 250],
+  'CLOSING STATEMENT':               [148, 163, 184],
+}
+
+function fmtUSD(n: number): string {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n)
+}
+
+function stripMd(text: string): string {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/\*(.+?)\*/g, '$1')
+    .replace(/^[-*•]\s+/, '')
+    .replace(/^\d+\.\s+/, '')
+    .trim()
+}
+
 export async function downloadReportAsPDF(report: {
   building_name: string
   building_address: string
@@ -11,157 +43,188 @@ export async function downloadReportAsPDF(report: {
   net_income: number
   vacant_units: number
 }): Promise<void> {
-  const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
+  const doc = new jsPDF({ unit: 'pt', format: 'letter', orientation: 'portrait' })
+
+  // Page geometry
+  const PW = 612
+  const PH = 792
+  const ML = 54
+  const MR = 54
+  const CW = PW - ML - MR  // 504pt
+  const TOP = 54
+  const BOT = 54            // bottom margin — footer lives inside this space
+
+  let y = TOP
+
+  // ── Color helpers ──────────────────────────────────────────────────────────
+  const col = {
+    dark:   [26,  26,  46]  as [number, number, number],
+    gray:   [55,  65,  81]  as [number, number, number],
+    light:  [113, 128, 150] as [number, number, number],
+    green:  [22,  101, 52]  as [number, number, number],
+    red:    [185, 28,  28]  as [number, number, number],
+    border: [218, 224, 232] as [number, number, number],
+    bg:     [248, 249, 252] as [number, number, number],
+  }
+
+  const tc = (rgb: [number, number, number]) => doc.setTextColor(rgb[0], rgb[1], rgb[2])
+  const dc = (rgb: [number, number, number]) => doc.setDrawColor(rgb[0], rgb[1], rgb[2])
+  const fc = (rgb: [number, number, number]) => doc.setFillColor(rgb[0], rgb[1], rgb[2])
+
+  const FOOTER_H = 36  // reserved at bottom of each page for footer
+  const usableH = PH - TOP - BOT - FOOTER_H
+
+  function need(h: number) {
+    if (y + h > TOP + usableH) {
+      doc.addPage()
+      y = TOP
+    }
+  }
+
+  // ── HEADER (page 1) ────────────────────────────────────────────────────────
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(8.5)
+  tc(col.light)
+  doc.text('KINYU REALTY AND MANAGEMENT CORP', ML, y)
+  y += 22
+
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(26)
+  tc(col.dark)
+  doc.text('Monthly Owner Report', ML, y)
+  y += 8
+
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(13.5)
+  tc(col.gray)
+  const period = `${MONTHS[report.report_month - 1]} ${report.report_year}`
+  doc.text(`${report.building_name}  ·  ${period}`, ML, y)
+  y += 5
+
+  doc.setFontSize(10.5)
+  tc(col.light)
+  doc.text(report.building_address, ML, y)
+  y += 20
+
+  // Thick divider
+  dc(col.dark)
+  doc.setLineWidth(2.5)
+  doc.line(ML, y, PW - MR, y)
+  y += 30
+
+  // ── FINANCIAL SUMMARY BOX ──────────────────────────────────────────────────
+  const boxH = 76
+  fc(col.bg)
+  dc(col.border)
+  doc.setLineWidth(0.75)
+  doc.roundedRect(ML, y, CW, boxH, 6, 6, 'FD')
+
+  const financials = [
+    { label: 'RENT COLLECTED', value: fmtUSD(report.total_rent_collected), color: col.dark },
+    { label: 'TOTAL EXPENSES', value: fmtUSD(report.total_expenses),       color: col.dark },
+    { label: 'NET INCOME',     value: fmtUSD(report.net_income),           color: report.net_income >= 0 ? col.green : col.red },
   ]
 
-  const formatCurrency = (n: number) =>
-    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n)
+  const col3W = CW / 3
+  for (let i = 0; i < financials.length; i++) {
+    const { label, value, color } = financials[i]
+    const cx = ML + col3W * i + col3W / 2
 
-  const htmlContent = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Georgia', serif;
-      color: #1a1a2e;
-      background: #ffffff;
-      padding: 48px;
-      max-width: 800px;
-      margin: 0 auto;
-      line-height: 1.6;
-    }
-    .header {
-      border-bottom: 3px solid #1a1a2e;
-      padding-bottom: 24px;
-      margin-bottom: 32px;
-    }
-    .company-name {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: #4a5568;
-      margin-bottom: 8px;
-    }
-    .report-title {
-      font-size: 28px;
-      font-weight: 700;
-      color: #1a1a2e;
-      margin-bottom: 6px;
-    }
-    .report-subtitle {
-      font-size: 15px;
-      color: #4a5568;
-    }
-    .financials {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin: 32px 0;
-      background: #f8f9fc;
-      border: 1px solid #e2e8f0;
-      padding: 24px;
-      border-radius: 8px;
-    }
-    .financial-item { text-align: center; }
-    .financial-label {
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #718096;
-      margin-bottom: 4px;
-    }
-    .financial-value {
-      font-size: 22px;
-      font-weight: 700;
-      color: #1a1a2e;
-    }
-    .financial-value.positive { color: #276749; }
-    .financial-value.negative { color: #c53030; }
-    .report-content { margin-top: 24px; }
-    h2 {
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #2d3748;
-      margin-top: 32px;
-      margin-bottom: 12px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid #e2e8f0;
-    }
-    p {
-      font-size: 14px;
-      color: #2d3748;
-      margin-bottom: 12px;
-    }
-    ul { margin: 8px 0 12px 20px; }
-    li { font-size: 14px; color: #2d3748; margin-bottom: 6px; }
-    .footer {
-      margin-top: 48px;
-      padding-top: 16px;
-      border-top: 1px solid #e2e8f0;
-      font-size: 11px;
-      color: #718096;
-      display: flex;
-      justify-content: space-between;
-    }
-  </style>
-</head>
-<body>
-  <div class="header">
-    <div class="company-name">Kinyu Realty and Management Corp</div>
-    <div class="report-title">Monthly Owner Report</div>
-    <div class="report-subtitle">${report.building_name} &mdash; ${months[report.report_month - 1]} ${report.report_year}</div>
-    <div class="report-subtitle" style="margin-top:4px;font-size:13px;">${report.building_address}</div>
-  </div>
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(7.5)
+    tc(col.light)
+    doc.text(label, cx, y + 21, { align: 'center' })
 
-  <div class="financials">
-    <div class="financial-item">
-      <div class="financial-label">Rent Collected</div>
-      <div class="financial-value">${formatCurrency(report.total_rent_collected)}</div>
-    </div>
-    <div class="financial-item">
-      <div class="financial-label">Total Expenses</div>
-      <div class="financial-value">${formatCurrency(report.total_expenses)}</div>
-    </div>
-    <div class="financial-item">
-      <div class="financial-label">Net Income</div>
-      <div class="financial-value ${report.net_income >= 0 ? 'positive' : 'negative'}">${formatCurrency(report.net_income)}</div>
-    </div>
-  </div>
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(18)
+    tc(color)
+    doc.text(value, cx, y + 53, { align: 'center' })
+  }
 
-  <div class="report-content">
-    ${report.generated_report
-      .replace(/## (.+)/g, '<h2>$1</h2>')
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/^- (.+)/gm, '<li>$1</li>')
-      .replace(/(<li>.*<\/li>\n?)+/g, (match) => `<ul>${match}</ul>`)
-      .replace(/\n\n/g, '</p><p>')
-      .replace(/^(?!<[hul])/gm, '<p>')
-      .replace(/<p><\/p>/g, '')
+  // Internal column dividers
+  dc(col.border)
+  doc.setLineWidth(0.5)
+  for (let i = 1; i < 3; i++) {
+    const x = ML + col3W * i
+    doc.line(x, y + 10, x, y + boxH - 10)
+  }
+
+  y += boxH + 34
+
+  // ── REPORT SECTIONS ────────────────────────────────────────────────────────
+  const sections = report.generated_report.split(/^## /m).filter(Boolean)
+
+  for (const section of sections) {
+    const nlIdx = section.indexOf('\n')
+    const heading = (nlIdx > -1 ? section.slice(0, nlIdx) : section).trim()
+    const body    = (nlIdx > -1 ? section.slice(nlIdx + 1) : '').trim()
+
+    const hColor: [number, number, number] = SECTION_COLORS[heading.toUpperCase()] ?? [59, 130, 246]
+
+    // Section heading block
+    need(48)
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(9.5)
+    tc(hColor)
+    doc.text(heading.toUpperCase(), ML, y)
+    y += 7
+
+    dc(hColor)
+    doc.setLineWidth(1.25)
+    doc.line(ML, y, PW - MR, y)
+    y += 14
+
+    // Body lines
+    const lines = body.split('\n').filter(Boolean)
+    for (const line of lines) {
+      const isBullet = /^[-*•]\s/.test(line) || /^\d+\.\s/.test(line)
+      const clean = stripMd(line)
+
+      if (isBullet) {
+        const wrapped = doc.splitTextToSize(`•  ${clean}`, CW - 16)
+        need(wrapped.length * 13 + 5)
+        doc.setFont('helvetica', 'normal')
+        doc.setFontSize(10.5)
+        tc(col.gray)
+        doc.text(wrapped, ML + 10, y)
+        y += wrapped.length * 13 + 5
+      } else {
+        const wrapped = doc.splitTextToSize(clean, CW)
+        need(wrapped.length * 13 + 6)
+        doc.setFont('helvetica', 'normal')
+        doc.setFontSize(10.5)
+        tc(col.gray)
+        doc.text(wrapped, ML, y)
+        y += wrapped.length * 13 + 6
+      }
     }
-  </div>
 
-  <div class="footer">
-    <span>Kinyu Realty and Management Corp &mdash; Confidential</span>
-    <span>Generated ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-  </div>
-</body>
-</html>`
+    y += 18
+  }
 
-  const blob = new Blob([htmlContent], { type: 'text/html' })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = `${report.building_name.replace(/\s+/g, '-')}-${months[report.report_month - 1]}-${report.report_year}-Report.html`
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-  URL.revokeObjectURL(url)
+  // ── FOOTER ON EVERY PAGE ───────────────────────────────────────────────────
+  const totalPages = (doc as unknown as { internal: { getNumberOfPages(): number } }).internal.getNumberOfPages()
+  const genDate = new Date().toLocaleDateString('en-US', {
+    year: 'numeric', month: 'long', day: 'numeric',
+  })
+
+  for (let p = 1; p <= totalPages; p++) {
+    doc.setPage(p)
+    const fy = PH - BOT + 14
+
+    dc(col.border)
+    doc.setLineWidth(0.5)
+    doc.line(ML, fy - 12, PW - MR, fy - 12)
+
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(8)
+    tc(col.light)
+    doc.text('Kinyu Realty and Management Corp — Confidential', ML, fy)
+    doc.text(`Page ${p} of ${totalPages}`, PW / 2, fy, { align: 'center' })
+    doc.text(`Generated ${genDate}`, PW - MR, fy, { align: 'right' })
+  }
+
+  // ── DOWNLOAD ───────────────────────────────────────────────────────────────
+  const slug = report.building_name.replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+  doc.save(`${slug}-${MONTHS[report.report_month - 1]}-${report.report_year}-Owner-Report.pdf`)
 }
