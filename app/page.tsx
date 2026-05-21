@@ -8,6 +8,9 @@ export default async function Root() {
   const { userId } = await auth()
 
   if (userId) {
+    // Determine destination before calling redirect() — redirect() throws
+    // internally and must never be inside a try/catch or the catch swallows it.
+    let destination = '/dashboard'
     try {
       const supabase = createServerClient()
       const { data } = await supabase
@@ -16,10 +19,11 @@ export default async function Root() {
         .eq('clerk_user_id', userId)
         .eq('is_active', true)
         .maybeSingle()
-      redirect(data ? '/portal' : '/dashboard')
+      if (data) destination = '/portal'
     } catch {
-      redirect('/dashboard')
+      // supabase error — default to /dashboard
     }
+    redirect(destination)
   }
 
   return (
