@@ -1,5 +1,4 @@
--- Kinyu Realty and Management Corp
--- Initial database schema
+-- Property Management Platform — Initial database schema
 
 -- Buildings table
 CREATE TABLE IF NOT EXISTS buildings (
@@ -60,21 +59,21 @@ CREATE OR REPLACE TRIGGER reports_updated_at
 ALTER TABLE buildings DISABLE ROW LEVEL SECURITY;
 ALTER TABLE reports DISABLE ROW LEVEL SECURITY;
 
--- Seed sample buildings for Kinyu Realty (add all 40 buildings here)
+-- Seed sample buildings
 INSERT INTO buildings (name, address, total_units) VALUES
-  ('Kinyu Tower A',        '1201 Main Street, Los Angeles, CA 90001',      20),
-  ('Kinyu Tower B',        '1205 Main Street, Los Angeles, CA 90001',      15),
-  ('Kinyu Residences',     '847 Oak Avenue, Los Angeles, CA 90015',        18),
-  ('Kinyu Heights',        '321 Pine Road, Pasadena, CA 91101',            12),
-  ('Kinyu Gardens',        '654 Elm Street, Glendale, CA 91201',           10),
-  ('Kinyu Square',         '987 Cedar Lane, Burbank, CA 91501',             8),
-  ('Kinyu Park View',      '111 Willow Way, Culver City, CA 90230',        14),
-  ('Kinyu Manor',          '222 Birch Boulevard, Santa Monica, CA 90401',  16),
-  ('Kinyu Plaza',          '333 Walnut Avenue, Long Beach, CA 90802',      22),
-  ('Kinyu Suites',         '444 Ash Court, Torrance, CA 90501',            11),
-  ('Kinyu Terrace',        '555 Maple Drive, Compton, CA 90220',           13),
-  ('Kinyu Palms',          '666 Palm Avenue, Inglewood, CA 90301',         17),
-  ('Kinyu Vista',          '777 Vista Road, Hawthorne, CA 90250',          19),
-  ('Kinyu Commons',        '888 Common Lane, Gardena, CA 90247',           9),
-  ('Kinyu Court',          '999 Court Street, Lawndale, CA 90260',         15)
+  ('Tower A',        '1201 Main Street, Los Angeles, CA 90001',      20),
+  ('Tower B',        '1205 Main Street, Los Angeles, CA 90001',      15),
+  ('Residences',     '847 Oak Avenue, Los Angeles, CA 90015',        18),
+  ('Heights',        '321 Pine Road, Pasadena, CA 91101',            12),
+  ('Gardens',        '654 Elm Street, Glendale, CA 91201',           10),
+  ('Square',         '987 Cedar Lane, Burbank, CA 91501',             8),
+  ('Park View',      '111 Willow Way, Culver City, CA 90230',        14),
+  ('Manor',          '222 Birch Boulevard, Santa Monica, CA 90401',  16),
+  ('Plaza',          '333 Walnut Avenue, Long Beach, CA 90802',      22),
+  ('Suites',         '444 Ash Court, Torrance, CA 90501',            11),
+  ('Terrace',        '555 Maple Drive, Compton, CA 90220',           13),
+  ('Palms',          '666 Palm Avenue, Inglewood, CA 90301',         17),
+  ('Vista',          '777 Vista Road, Hawthorne, CA 90250',          19),
+  ('Commons',        '888 Common Lane, Gardena, CA 90247',           9),
+  ('Court',          '999 Court Street, Lawndale, CA 90260',         15)
 ON CONFLICT DO NOTHING;
