@@ -1,22 +1,28 @@
 import { UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
-import { Zap } from 'lucide-react'
 import { NavLinks } from '@/components/nav-links'
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-full bg-[#0a0c10]">
+    <div className="flex h-full bg-[#0b0c09]">
       {/* Sidebar */}
-      <aside className="w-60 flex-shrink-0 flex flex-col border-r border-[#1e2535] bg-[#10141c]">
+      <aside className="noise w-56 flex-shrink-0 flex flex-col border-r border-[#222620] bg-[#0e100d]">
         {/* Logo */}
-        <div className="h-14 flex items-center px-4 border-b border-[#1e2535]">
-          <Link href="/dashboard" className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-md bg-[#3b82f6] flex items-center justify-center flex-shrink-0">
-              <Zap size={14} className="text-white" strokeWidth={2.5} />
+        <div className="h-16 flex items-center px-5 border-b border-[#222620]">
+          <Link href="/dashboard" className="flex items-center gap-3 group">
+            <div className="w-9 h-9 rounded-sm border border-[#c8a86a]/30 bg-[#c8a86a]/06 flex items-center justify-center flex-shrink-0 group-hover:border-[#c8a86a]/50 group-hover:bg-[#c8a86a]/10 transition-all">
+              <span className="font-display text-xl font-semibold text-[#c8a86a] leading-none">K</span>
             </div>
             <div>
-              <div className="text-xs font-bold text-[#e2e8f0] leading-none tracking-wider">KINYU</div>
-              <div className="text-[9px] text-[#64748b] tracking-[0.2em] leading-none mt-0.5">REALTY</div>
+              <div
+                className="font-display text-sm font-semibold text-[#eae6d6] leading-none"
+                style={{ letterSpacing: '0.22em' }}
+              >
+                KINYU
+              </div>
+              <div className="text-[8px] text-[#5c5850] mt-1 leading-none" style={{ letterSpacing: '0.3em' }}>
+                REALTY
+              </div>
             </div>
           </Link>
         </div>
@@ -24,11 +30,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <NavLinks />
 
         {/* Status + User */}
-        <div className="p-3 border-t border-[#1e2535]">
+        <div className="p-4 border-t border-[#222620]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#10b981] status-pulse" />
-              <span className="text-[10px] font-mono text-[#64748b] tracking-widest">ONLINE</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-[#5bba7a] status-pulse" />
+              <span className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.22em' }}>ONLINE</span>
             </div>
             <UserButton appearance={{ elements: { avatarBox: 'w-6 h-6' } }} />
           </div>
@@ -36,7 +42,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto dot-grid">
         {children}
       </main>
     </div>

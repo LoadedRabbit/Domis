@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
   Building2, FileText, Users, TrendingUp,
-  ChevronRight, Plus, Clock, Zap, AlertCircle,
+  ChevronRight, Plus, Clock, AlertCircle,
 } from 'lucide-react'
 import type { Building, Report } from '@/types'
 import { formatCurrency, formatMonth } from '@/lib/utils'
@@ -33,7 +33,6 @@ export default function DashboardPage() {
         }
 
         const buildingsData: Building[] = await bRes.json()
-
         if (buildingsData.length === 0) {
           await fetch('/api/seed', { method: 'POST' })
           const fresh = await fetch('/api/buildings')
@@ -55,44 +54,77 @@ export default function DashboardPage() {
   const totalUnits = buildings.reduce((sum, b) => sum + b.total_units, 0)
 
   const stats = [
-    { label: 'Properties',   value: buildings.length,      icon: Building2,   color: '#3b82f6' },
-    { label: 'Total Units',  value: totalUnits,             icon: Users,       color: '#94a3b8' },
-    { label: 'Reports',      value: recentReports.length,  icon: FileText,    color: '#10b981' },
-    { label: 'Staff',        value: 6,                     icon: TrendingUp,  color: '#f59e0b' },
+    { label: 'Properties',  value: buildings.length,     sub: 'buildings',    icon: Building2,  color: '#c8a86a' },
+    { label: 'Total Units', value: totalUnits,            sub: 'residential',  icon: Users,      color: '#9e9a8c' },
+    { label: 'Reports',     value: recentReports.length, sub: 'generated',    icon: FileText,   color: '#5bba7a' },
+    { label: 'Staff',       value: 6,                    sub: 'active',       icon: TrendingUp, color: '#d48f4a' },
   ]
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-8 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-2 mb-1">
-          <div className="w-1.5 h-1.5 rounded-full bg-[#10b981] status-pulse" />
-          <span className="text-[10px] font-mono text-[#64748b] tracking-widest uppercase">Operational</span>
+      <div
+        className="animate-in mb-10"
+        style={{ animationDelay: '0ms' }}
+      >
+        <div className="flex items-center gap-2.5 mb-3">
+          <div className="w-1.5 h-1.5 rounded-full bg-[#5bba7a] status-pulse" />
+          <span
+            className="text-[8px] text-[#5c5850]"
+            style={{ letterSpacing: '0.28em' }}
+          >
+            OPERATIONAL
+          </span>
         </div>
-        <h1 className="text-2xl font-bold text-[#e2e8f0] tracking-tight">Operations Center</h1>
-        <p className="text-sm text-[#64748b] mt-0.5">Kinyu Realty and Management Corp</p>
+        <h1 className="font-display text-5xl font-light text-[#eae6d6] leading-tight tracking-tight mb-1">
+          Operations
+        </h1>
+        <div className="flex items-center gap-3 mt-2">
+          <div className="h-px flex-1 bg-gradient-to-r from-[#c8a86a]/40 to-transparent max-w-48" />
+          <p className="text-xs text-[#5c5850]" style={{ letterSpacing: '0.15em' }}>
+            KINYU REALTY AND MANAGEMENT CORP
+          </p>
+        </div>
       </div>
 
       {error && (
-        <div className="flex items-start gap-2.5 bg-[#ef4444]/5 border border-[#ef4444]/20 rounded-lg p-4 mb-6">
-          <AlertCircle size={14} className="text-[#ef4444] flex-shrink-0 mt-0.5" />
+        <div
+          className="flex items-start gap-3 bg-[#2e1414] border border-[#c45c5c]/20 rounded-sm p-4 mb-8 animate-in"
+          style={{ animationDelay: '40ms' }}
+        >
+          <AlertCircle size={14} className="text-[#c45c5c] flex-shrink-0 mt-0.5" />
           <div>
-            <p className="text-xs font-mono text-[#ef4444]">{error}</p>
-            <p className="text-[11px] text-[#64748b] mt-0.5">Check Supabase environment variables in Vercel.</p>
+            <p className="text-xs text-[#c45c5c]">{error}</p>
+            <p className="text-[11px] text-[#5c5850] mt-0.5">Check Supabase environment variables in Vercel.</p>
           </div>
         </div>
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
-        {stats.map(({ label, value, icon: Icon, color }) => (
-          <div key={label} className="bg-[#10141c] border border-[#1e2535] rounded-lg p-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
+        {stats.map(({ label, value, sub, icon: Icon, color }, i) => (
+          <div
+            key={label}
+            className="animate-in bg-[#101210] border border-[#222620] rounded-sm p-5 hover:border-[#2e3328] transition-colors group"
+            style={{ animationDelay: `${80 + i * 60}ms` }}
+          >
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[9px] font-mono text-[#64748b] uppercase tracking-widest">{label}</span>
-              <Icon size={13} style={{ color }} />
+              <span
+                className="text-[8px] text-[#5c5850]"
+                style={{ letterSpacing: '0.2em' }}
+              >
+                {label.toUpperCase()}
+              </span>
+              <Icon size={12} style={{ color, opacity: 0.5 }} />
             </div>
-            <div className="text-2xl font-bold font-mono" style={{ color }}>
-              {loading ? <span className="text-[#64748b]">—</span> : value}
+            <div
+              className="font-display leading-none mb-2 transition-colors"
+              style={{ fontSize: '52px', color, fontWeight: 300 }}
+            >
+              {loading ? <span style={{ color: '#222620' }}>—</span> : value}
+            </div>
+            <div className="text-[9px] text-[#5c5850]" style={{ letterSpacing: '0.15em' }}>
+              {sub}
             </div>
           </div>
         ))}
@@ -100,53 +132,65 @@ export default function DashboardPage() {
 
       {/* Main grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Buildings list */}
-        <div className="lg:col-span-2">
+        {/* Buildings */}
+        <div className="lg:col-span-2 animate-in" style={{ animationDelay: '320ms' }}>
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Building2 size={13} className="text-[#64748b]" />
-              <h2 className="text-[10px] font-mono text-[#64748b] uppercase tracking-widest">Properties</h2>
+            <div className="flex items-center gap-2.5">
+              <Building2 size={12} className="text-[#5c5850]" />
+              <span className="text-[9px] text-[#5c5850]" style={{ letterSpacing: '0.22em' }}>
+                PROPERTIES
+              </span>
             </div>
             {!loading && (
-              <span className="text-[10px] font-mono text-[#3b82f6]">{buildings.length} buildings</span>
+              <span
+                className="text-[9px] text-[#c8a86a]"
+                style={{ letterSpacing: '0.15em' }}
+              >
+                {buildings.length} listed
+              </span>
             )}
           </div>
 
           {loading ? (
-            <div className="space-y-px bg-[#10141c] border border-[#1e2535] rounded-lg overflow-hidden">
+            <div className="bg-[#101210] border border-[#222620] rounded-sm overflow-hidden">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-[60px] animate-pulse bg-[#131822]/60" />
+                <div key={i} className="h-[62px] animate-pulse bg-[#161914]/60 border-b border-[#222620] last:border-b-0" />
               ))}
             </div>
           ) : (
-            <div className="bg-[#10141c] border border-[#1e2535] rounded-lg overflow-hidden">
+            <div className="bg-[#101210] border border-[#222620] rounded-sm overflow-hidden">
               {buildings.map((building, i) => (
                 <Link
                   key={building.id}
                   href={`/dashboard/buildings/${building.id}`}
-                  className={`flex items-center justify-between px-4 py-3.5 hover:bg-[#131822] transition-colors group ${
-                    i !== buildings.length - 1 ? 'border-b border-[#1e2535]' : ''
+                  className={`flex items-center justify-between px-5 py-4 hover:bg-[#161914] transition-all group ${
+                    i !== buildings.length - 1 ? 'border-b border-[#222620]' : ''
                   }`}
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-7 h-7 rounded-md bg-[#131822] border border-[#1e2535] flex items-center justify-center flex-shrink-0 group-hover:border-[#3b82f6]/30 group-hover:bg-[#3b82f6]/5 transition-all">
-                      <Building2 size={12} className="text-[#64748b] group-hover:text-[#3b82f6] transition-colors" />
-                    </div>
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div
+                      className="w-1.5 h-1.5 rounded-full flex-shrink-0 transition-colors"
+                      style={{ background: '#2e3328' }}
+                    />
                     <div className="min-w-0">
-                      <div className="text-sm font-medium text-[#e2e8f0] leading-tight truncate">{building.name}</div>
-                      <div className="text-[11px] text-[#64748b] truncate">{building.address}</div>
+                      <div className="font-display text-base font-medium italic text-[#c8c4b4] group-hover:text-[#eae6d6] leading-tight truncate transition-colors">
+                        {building.name}
+                      </div>
+                      <div className="text-[10px] text-[#5c5850] truncate mt-0.5">
+                        {building.address}
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 flex-shrink-0 ml-3">
+                  <div className="flex items-center gap-4 flex-shrink-0 ml-4">
                     <div className="text-right hidden sm:block">
-                      <div className="text-sm font-mono font-bold text-[#94a3b8]">{building.total_units}</div>
-                      <div className="text-[9px] text-[#64748b]">units</div>
+                      <div className="font-display text-xl font-light text-[#9e9a8c]">{building.total_units}</div>
+                      <div className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.15em' }}>UNITS</div>
                     </div>
-                    <div className="flex items-center gap-1 bg-[#3b82f6]/8 border border-[#3b82f6]/20 rounded-md px-2.5 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Plus size={10} className="text-[#3b82f6]" />
-                      <span className="text-[10px] text-[#3b82f6] font-mono">Report</span>
+                    <div className="flex items-center gap-1.5 border border-[#c8a86a]/0 group-hover:border-[#c8a86a]/20 bg-[#c8a86a]/0 group-hover:bg-[#c8a86a]/04 rounded-sm px-2.5 py-1 opacity-0 group-hover:opacity-100 transition-all">
+                      <Plus size={9} className="text-[#c8a86a]" />
+                      <span className="text-[9px] text-[#c8a86a]" style={{ letterSpacing: '0.1em' }}>REPORT</span>
                     </div>
-                    <ChevronRight size={14} className="text-[#1e2535] group-hover:text-[#3b82f6] transition-colors" />
+                    <ChevronRight size={13} className="text-[#2e3328] group-hover:text-[#c8a86a] transition-colors" />
                   </div>
                 </Link>
               ))}
@@ -155,30 +199,36 @@ export default function DashboardPage() {
         </div>
 
         {/* Recent Reports */}
-        <div>
+        <div className="animate-in" style={{ animationDelay: '380ms' }}>
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <FileText size={13} className="text-[#64748b]" />
-              <h2 className="text-[10px] font-mono text-[#64748b] uppercase tracking-widest">Recent Reports</h2>
+            <div className="flex items-center gap-2.5">
+              <FileText size={12} className="text-[#5c5850]" />
+              <span className="text-[9px] text-[#5c5850]" style={{ letterSpacing: '0.22em' }}>
+                RECENT REPORTS
+              </span>
             </div>
-            <Link href="/dashboard/reports" className="text-[10px] font-mono text-[#3b82f6] hover:text-[#60a5fa] transition-colors">
-              View all →
+            <Link
+              href="/dashboard/reports"
+              className="text-[9px] text-[#c8a86a] hover:text-[#eae6d6] transition-colors"
+              style={{ letterSpacing: '0.1em' }}
+            >
+              VIEW ALL →
             </Link>
           </div>
 
           {loading ? (
             <div className="space-y-2">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-20 bg-[#10141c] border border-[#1e2535] rounded-lg animate-pulse" />
+                <div key={i} className="h-20 bg-[#101210] border border-[#222620] rounded-sm animate-pulse" />
               ))}
             </div>
           ) : recentReports.length === 0 ? (
-            <div className="bg-[#10141c] border border-[#1e2535] rounded-lg p-8 text-center">
-              <div className="w-10 h-10 rounded-full bg-[#131822] border border-[#1e2535] flex items-center justify-center mx-auto mb-3">
-                <Clock size={16} className="text-[#64748b]" />
+            <div className="bg-[#101210] border border-[#222620] rounded-sm p-8 text-center">
+              <div className="w-10 h-10 rounded-sm bg-[#161914] border border-[#222620] flex items-center justify-center mx-auto mb-3">
+                <Clock size={14} className="text-[#5c5850]" />
               </div>
-              <p className="text-xs font-medium text-[#94a3b8]">No reports yet</p>
-              <p className="text-[11px] text-[#64748b] mt-1">Select a building to generate your first report</p>
+              <p className="text-xs text-[#9e9a8c]">No reports yet</p>
+              <p className="text-[10px] text-[#5c5850] mt-1">Select a building to begin</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -186,25 +236,30 @@ export default function DashboardPage() {
                 <Link
                   key={report.id}
                   href={`/dashboard/reports/${report.id}`}
-                  className="block bg-[#10141c] border border-[#1e2535] rounded-lg p-3.5 hover:border-[#2a3350] hover:bg-[#131822] transition-all group"
+                  className="block bg-[#101210] border border-[#222620] rounded-sm p-4 hover:border-[#2e3328] hover:bg-[#161914] transition-all group"
                 >
                   <div className="flex items-start justify-between mb-1.5">
-                    <div className="text-xs font-semibold text-[#e2e8f0] leading-tight truncate pr-2 group-hover:text-white transition-colors">
+                    <div className="font-display text-sm italic font-medium text-[#c8c4b4] group-hover:text-[#eae6d6] leading-tight truncate pr-2 transition-colors">
                       {report.building_name}
                     </div>
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#10b981] flex-shrink-0 mt-1" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#5bba7a] flex-shrink-0 mt-1 status-pulse" />
                   </div>
-                  <div className="text-[10px] text-[#64748b] font-mono mb-2.5">
-                    {formatMonth(report.report_month, report.report_year)}
+                  <div className="text-[9px] text-[#5c5850] mb-3" style={{ letterSpacing: '0.12em' }}>
+                    {formatMonth(report.report_month, report.report_year).toUpperCase()}
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className={`text-sm font-bold font-mono ${Number(report.net_income) >= 0 ? 'text-[#10b981]' : 'text-[#ef4444]'}`}>
-                      {formatCurrency(Number(report.net_income))}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Zap size={9} className="text-[#64748b]" />
-                      <span className="text-[9px] text-[#64748b]">NOI</span>
-                    </span>
+                  <div className="flex items-end justify-between">
+                    <div>
+                      <div
+                        className="font-display text-2xl font-light leading-none"
+                        style={{ color: Number(report.net_income) >= 0 ? '#5bba7a' : '#c45c5c' }}
+                      >
+                        {formatCurrency(Number(report.net_income))}
+                      </div>
+                      <div className="text-[8px] text-[#5c5850] mt-0.5" style={{ letterSpacing: '0.15em' }}>
+                        NET INCOME
+                      </div>
+                    </div>
+                    <ChevronRight size={12} className="text-[#2e3328] group-hover:text-[#c8a86a] transition-colors mb-1" />
                   </div>
                 </Link>
               ))}

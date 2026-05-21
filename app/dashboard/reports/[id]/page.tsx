@@ -4,33 +4,31 @@ import { useEffect, useState, use } from 'react'
 import Link from 'next/link'
 import {
   ArrowLeft, Building2, Download, FileText, DollarSign,
-  Home, Wrench, Users, StickyNote, ChevronRight, Loader2, Zap,
+  Home, Wrench, Users, StickyNote, ChevronRight, Loader2,
   TrendingUp, TrendingDown,
 } from 'lucide-react'
 import type { Report } from '@/types'
 import { formatCurrency, formatMonth } from '@/lib/utils'
 import { downloadReportAsPDF } from '@/lib/pdf'
 
-/* ─── Section icons map ─────────────────────────────────── */
-const SECTION_META: Record<string, { color: string; dot: string }> = {
-  'EXECUTIVE SUMMARY':         { color: '#3b82f6', dot: '#3b82f6' },
-  'FINANCIAL SUMMARY':         { color: '#10b981', dot: '#10b981' },
-  'OCCUPANCY REPORT':          { color: '#60a5fa', dot: '#60a5fa' },
-  'MAINTENANCE SUMMARY':       { color: '#f59e0b', dot: '#f59e0b' },
-  'TENANT UPDATES':            { color: '#a78bfa', dot: '#a78bfa' },
-  'RECOMMENDATIONS':           { color: '#34d399', dot: '#34d399' },
-  'RECOMMENDATIONS FOR NEXT MONTH': { color: '#34d399', dot: '#34d399' },
-  'LOOKING AHEAD':             { color: '#60a5fa', dot: '#60a5fa' },
-  'CLOSING STATEMENT':         { color: '#94a3b8', dot: '#94a3b8' },
+const SECTION_COLORS: Record<string, string> = {
+  'EXECUTIVE SUMMARY':               '#c8a86a',
+  'FINANCIAL SUMMARY':               '#5bba7a',
+  'OCCUPANCY REPORT':                '#7ab4e0',
+  'MAINTENANCE SUMMARY':             '#d48f4a',
+  'TENANT UPDATES':                  '#a89ec8',
+  'RECOMMENDATIONS':                 '#5bba7a',
+  'RECOMMENDATIONS FOR NEXT MONTH':  '#5bba7a',
+  'LOOKING AHEAD':                   '#7ab4e0',
+  'CLOSING STATEMENT':               '#9e9a8c',
 }
 
-function defaultMeta() {
-  return { color: '#3b82f6', dot: '#3b82f6' }
+function sectionColor(heading: string): string {
+  return SECTION_COLORS[heading.toUpperCase()] ?? '#c8a86a'
 }
 
-/* ─── Individual section card ───────────────────────────── */
 function ReportSection({ heading, body, index }: { heading: string; body: string; index: number }) {
-  const meta = SECTION_META[heading.toUpperCase()] ?? defaultMeta()
+  const color = sectionColor(heading)
   const lines = body.split('\n').filter(Boolean)
   const elements: React.ReactNode[] = []
   let listBuffer: string[] = []
@@ -38,15 +36,15 @@ function ReportSection({ heading, body, index }: { heading: string; body: string
   function flush(key: string) {
     if (listBuffer.length === 0) return
     elements.push(
-      <ul key={key} className="space-y-2 mb-3">
+      <ul key={key} className="space-y-2 mb-4">
         {listBuffer.map((item, j) => (
-          <li key={j} className="flex items-start gap-2.5 text-sm text-[#e2e8f0] leading-relaxed">
-            <span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: meta.dot }} />
+          <li key={j} className="flex items-start gap-3 text-[13px] text-[#9e9a8c] leading-relaxed">
+            <span className="mt-2 w-px h-3 flex-shrink-0" style={{ background: color }} />
             <span
               dangerouslySetInnerHTML={{
                 __html: item
                   .replace(/^[-*•\d.]\s*/, '')
-                  .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'),
+                  .replace(/\*\*(.+?)\*\*/g, '<strong style="color:#c8c4b4">$1</strong>'),
               }}
             />
           </li>
@@ -64,10 +62,10 @@ function ReportSection({ heading, body, index }: { heading: string; body: string
       elements.push(
         <p
           key={i}
-          className="text-sm text-[#e2e8f0] leading-relaxed mb-2"
+          className="text-[13px] text-[#c8c4b4] leading-relaxed mb-3"
           dangerouslySetInnerHTML={{
             __html: line
-              .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+              .replace(/\*\*(.+?)\*\*/g, '<strong style="color:#eae6d6">$1</strong>')
               .replace(/\*(.+?)\*/g, '<em>$1</em>'),
           }}
         />
@@ -77,36 +75,34 @@ function ReportSection({ heading, body, index }: { heading: string; body: string
   flush('end')
 
   return (
-    <div className="bg-[#10141c] border border-[#1e2535] rounded-lg overflow-hidden">
-      {/* Section header */}
-      <div className="flex items-center gap-3 px-5 py-3.5 border-b border-[#1e2535] bg-[#131822]">
+    <div className="border border-[#222620] rounded-sm overflow-hidden bg-[#101210]">
+      <div className="flex items-center gap-3 px-5 py-3.5 border-b border-[#222620] bg-[#0e100d]">
         <span
-          className="w-5 h-5 rounded flex items-center justify-center flex-shrink-0 text-[10px] font-mono font-bold"
-          style={{ background: `${meta.color}18`, color: meta.color }}
+          className="font-display text-2xl font-light leading-none"
+          style={{ color, opacity: 0.35 }}
         >
-          {index + 1}
+          {String(index + 1).padStart(2, '0')}
         </span>
+        <div className="w-px h-4 bg-[#222620]" />
         <h3
-          className="text-[10px] font-mono font-bold uppercase tracking-[0.15em]"
-          style={{ color: meta.color }}
+          className="text-[9px]"
+          style={{ color, letterSpacing: '0.2em' }}
         >
-          {heading}
+          {heading.toUpperCase()}
         </h3>
       </div>
-      {/* Section body */}
       <div className="px-5 py-4">{elements}</div>
     </div>
   )
 }
 
-/* ─── Report content splitter ───────────────────────────── */
 function ReportContent({ content }: { content: string }) {
   const sections = content.split(/^## /m).filter(Boolean)
 
   if (sections.length === 0) {
     return (
-      <div className="bg-[#10141c] border border-[#1e2535] rounded-lg p-5">
-        <div className="whitespace-pre-wrap text-sm text-[#e2e8f0] leading-relaxed">{content}</div>
+      <div className="bg-[#101210] border border-[#222620] rounded-sm p-5">
+        <div className="whitespace-pre-wrap text-sm text-[#c8c4b4] leading-relaxed">{content}</div>
       </div>
     )
   }
@@ -123,7 +119,6 @@ function ReportContent({ content }: { content: string }) {
   )
 }
 
-/* ─── Page ───────────────────────────────────────────────── */
 export default function ReportPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const [report, setReport]         = useState<Report | null>(null)
@@ -155,146 +150,130 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
 
   if (loading) {
     return (
-      <div className="p-6 flex items-center justify-center h-64">
-        <Loader2 size={20} className="animate-spin text-[#64748b]" />
+      <div className="p-8 flex items-center justify-center h-64">
+        <Loader2 size={18} className="animate-spin text-[#5c5850]" />
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="p-6 flex items-center gap-2 text-sm text-[#ef4444]">
-        <span className="font-mono">Error:</span> {error}
+      <div className="p-8 flex items-center gap-2 text-sm text-[#c45c5c]">
+        <span>Error:</span> {error}
       </div>
     )
   }
 
   if (!report) {
-    return <div className="p-6 text-sm text-[#64748b]">Report not found.</div>
+    return <div className="p-8 text-sm text-[#5c5850]">Report not found.</div>
   }
 
   const noi    = Number(report.net_income)
   const noiPos = noi >= 0
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-8 max-w-4xl mx-auto">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-xs text-[#64748b] mb-6">
-        <Link href="/dashboard" className="hover:text-[#e2e8f0] transition-colors">Operations</Link>
-        <ChevronRight size={12} />
-        <Link href="/dashboard/reports" className="hover:text-[#e2e8f0] transition-colors">Reports</Link>
-        <ChevronRight size={12} />
-        <span className="text-[#e2e8f0] truncate max-w-48">{report.building_name}</span>
+      <div className="flex items-center gap-2 text-[10px] text-[#5c5850] mb-8 animate-in" style={{ letterSpacing: '0.1em', animationDelay: '0ms' }}>
+        <Link href="/dashboard" className="hover:text-[#eae6d6] transition-colors">OPERATIONS</Link>
+        <ChevronRight size={10} />
+        <Link href="/dashboard/reports" className="hover:text-[#eae6d6] transition-colors">REPORTS</Link>
+        <ChevronRight size={10} />
+        <span className="text-[#9e9a8c] font-display italic text-sm">{report.building_name}</span>
       </div>
 
-      {/* Header card */}
-      <div className="bg-[#10141c] border border-[#1e2535] rounded-lg p-6 mb-4">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex items-center gap-4 min-w-0">
-            <div className="w-12 h-12 rounded-lg bg-[#131822] border border-[#1e2535] flex items-center justify-center flex-shrink-0">
-              <FileText size={20} className="text-[#3b82f6]" />
+      {/* Header */}
+      <div className="bg-[#101210] border border-[#222620] rounded-sm p-6 mb-4 animate-in" style={{ animationDelay: '60ms' }}>
+        <div className="flex items-start justify-between gap-4 mb-5">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#5bba7a] status-pulse" />
+              <span className="text-[8px] text-[#5bba7a]" style={{ letterSpacing: '0.25em' }}>GENERATED</span>
             </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 mb-0.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#10b981]" />
-                <span className="text-[9px] font-mono text-[#10b981] uppercase tracking-widest">Generated</span>
-              </div>
-              <h1 className="text-xl font-bold text-[#e2e8f0] leading-tight">
-                {formatMonth(report.report_month, report.report_year)} Owner Report
-              </h1>
-              <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-                <Building2 size={11} className="text-[#64748b] flex-shrink-0" />
-                <span className="text-sm text-[#94a3b8]">{report.building_name}</span>
-                <span className="text-[#1e2535]">·</span>
-                <span className="text-xs text-[#64748b] truncate">{report.building_address}</span>
-              </div>
+            <h1 className="font-display text-4xl font-light text-[#eae6d6] leading-tight mb-2">
+              {formatMonth(report.report_month, report.report_year)}
+              <span className="text-[#5c5850]"> / Owner Report</span>
+            </h1>
+            <div className="flex items-center gap-2">
+              <Building2 size={11} className="text-[#5c5850] flex-shrink-0" />
+              <span className="font-display text-lg italic text-[#c8a86a]">{report.building_name}</span>
+              <span className="text-[#222620]">·</span>
+              <span className="text-xs text-[#5c5850] truncate">{report.building_address}</span>
             </div>
           </div>
 
           <div className="flex items-center gap-2 flex-shrink-0">
             <Link
               href="/dashboard/reports"
-              className="flex items-center gap-1.5 text-xs text-[#94a3b8] hover:text-[#e2e8f0] transition-colors px-3 py-2 border border-[#1e2535] rounded-lg hover:border-[#2a3350]"
+              className="flex items-center gap-1.5 text-[9px] text-[#9e9a8c] hover:text-[#eae6d6] transition-colors px-3 py-2 border border-[#222620] rounded-sm hover:border-[#2e3328]"
+              style={{ letterSpacing: '0.1em' }}
             >
-              <ArrowLeft size={13} />
-              Reports
+              <ArrowLeft size={11} />
+              REPORTS
             </Link>
             <button
               onClick={handleDownload}
               disabled={downloading}
-              className="flex items-center gap-1.5 text-xs bg-[#3b82f6] hover:bg-[#2563eb] disabled:opacity-50 text-white font-bold px-3 py-2 rounded-lg transition-colors"
+              className="flex items-center gap-1.5 text-[9px] bg-[#c8a86a]/10 hover:bg-[#c8a86a]/18 disabled:opacity-40 text-[#c8a86a] border border-[#c8a86a]/30 hover:border-[#c8a86a]/50 px-3 py-2 rounded-sm transition-all"
+              style={{ letterSpacing: '0.12em' }}
             >
-              {downloading ? <Loader2 size={13} className="animate-spin" /> : <Download size={13} />}
-              {downloading ? 'Preparing…' : 'Download PDF'}
+              {downloading ? <Loader2 size={11} className="animate-spin" /> : <Download size={11} />}
+              {downloading ? 'PREPARING…' : 'DOWNLOAD PDF'}
             </button>
           </div>
         </div>
 
         {/* Financial summary */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 pt-5 border-t border-[#1e2535]">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-5 border-t border-[#222620]">
           {[
-            {
-              label: 'Rent Collected',
-              value: formatCurrency(Number(report.total_rent_collected)),
-              icon: DollarSign,
-              color: '#3b82f6',
-            },
-            {
-              label: 'Total Expenses',
-              value: formatCurrency(Number(report.total_expenses)),
-              icon: DollarSign,
-              color: '#f59e0b',
-            },
-            {
-              label: 'Net Income',
-              value: formatCurrency(noi),
-              icon: noiPos ? TrendingUp : TrendingDown,
-              color: noiPos ? '#10b981' : '#ef4444',
-            },
-            {
-              label: 'Vacant Units',
-              value: report.vacant_units.toString(),
-              icon: Home,
-              color: '#94a3b8',
-            },
+            { label: 'Rent Collected', value: formatCurrency(Number(report.total_rent_collected)), icon: DollarSign, color: '#c8a86a' },
+            { label: 'Total Expenses', value: formatCurrency(Number(report.total_expenses)),       icon: DollarSign, color: '#d48f4a' },
+            { label: 'Net Income',     value: formatCurrency(noi),                                icon: noiPos ? TrendingUp : TrendingDown, color: noiPos ? '#5bba7a' : '#c45c5c' },
+            { label: 'Vacant Units',   value: report.vacant_units.toString(),                    icon: Home,       color: '#9e9a8c' },
           ].map(({ label, value, icon: Icon, color }) => (
-            <div key={label} className="bg-[#131822] border border-[#1e2535] rounded-lg p-3">
+            <div key={label} className="bg-[#0e100d] border border-[#222620] rounded-sm p-3">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[9px] font-mono text-[#64748b] uppercase tracking-widest">{label}</span>
-                <Icon size={11} style={{ color }} />
+                <span className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.18em' }}>{label.toUpperCase()}</span>
+                <Icon size={10} style={{ color, opacity: 0.6 }} />
               </div>
-              <div className="text-base font-bold font-mono" style={{ color }}>{value}</div>
+              <div className="font-display text-xl font-light leading-none" style={{ color }}>{value}</div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Input context */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+      {/* Context cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4 animate-in" style={{ animationDelay: '120ms' }}>
         {[
           { icon: Wrench,     label: 'Maintenance',   value: report.maintenance_issues },
           { icon: Users,      label: 'Tenant Issues', value: report.tenant_issues },
           { icon: StickyNote, label: 'Manager Notes', value: report.notes },
         ].map(({ icon: Icon, label, value }) => (
-          <div key={label} className="bg-[#10141c] border border-[#1e2535] rounded-lg p-3.5">
+          <div key={label} className="bg-[#101210] border border-[#222620] rounded-sm p-3.5">
             <div className="flex items-center gap-1.5 mb-2">
-              <Icon size={11} className="text-[#64748b]" />
-              <span className="text-[9px] font-mono text-[#64748b] uppercase tracking-widest">{label}</span>
+              <Icon size={10} className="text-[#5c5850]" />
+              <span className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.2em' }}>{label.toUpperCase()}</span>
             </div>
-            <p className="text-xs text-[#94a3b8] leading-relaxed line-clamp-3">
-              {value || <span className="text-[#64748b] italic">None reported</span>}
+            <p className="text-xs text-[#9e9a8c] leading-relaxed line-clamp-3">
+              {value || <span className="text-[#5c5850] italic">None reported</span>}
             </p>
           </div>
         ))}
       </div>
 
       {/* AI report sections */}
-      <div className="flex items-center gap-2 mb-3">
-        <Zap size={12} className="text-[#3b82f6]" />
-        <span className="text-[10px] font-mono text-[#64748b] uppercase tracking-widest">AI-Generated Owner Report</span>
+      <div className="flex items-center gap-3 mb-4 animate-in" style={{ animationDelay: '160ms' }}>
+        <div className="h-px flex-1 bg-gradient-to-r from-[#c8a86a]/30 to-transparent" />
+        <div className="flex items-center gap-2">
+          <FileText size={10} className="text-[#c8a86a]" />
+          <span className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.25em' }}>AI-GENERATED OWNER REPORT</span>
+        </div>
+        <div className="h-px flex-1 bg-gradient-to-l from-[#c8a86a]/30 to-transparent" />
       </div>
 
-      <ReportContent content={report.generated_report} />
+      <div className="animate-in" style={{ animationDelay: '200ms' }}>
+        <ReportContent content={report.generated_report} />
+      </div>
     </div>
   )
 }

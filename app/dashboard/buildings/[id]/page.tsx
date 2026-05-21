@@ -5,51 +5,40 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
   ArrowLeft, Building2, DollarSign, Home, FileText,
-  Loader2, AlertCircle, ChevronRight, Zap, Plus, X,
+  Loader2, AlertCircle, ChevronRight, Plus, X,
 } from 'lucide-react'
 import type { Building, ReportFormData, Report, RentRollEntry } from '@/types'
 import { MONTHS } from '@/types'
 import { formatCurrency, formatMonth } from '@/lib/utils'
 
-const currentYear = new Date().getFullYear()
+const currentYear  = new Date().getFullYear()
 const currentMonth = new Date().getMonth() + 1
 
 const STATUS_COLORS: Record<string, string> = {
-  Paid: '#10b981',
-  Outstanding: '#ef4444',
-  Partial: '#f59e0b',
-  Vacant: '#64748b',
+  Paid:        '#5bba7a',
+  Outstanding: '#c45c5c',
+  Partial:     '#d48f4a',
+  Vacant:      '#5c5850',
 }
 
 const BLANK_ENTRY: RentRollEntry = { unit: '', tenant: '', rent: '', status: 'Paid', notes: '' }
 
 export default function BuildingPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
-  const router = useRouter()
-  const [building, setBuilding] = useState<Building | null>(null)
+  const router  = useRouter()
+  const [building, setBuilding]             = useState<Building | null>(null)
   const [buildingReports, setBuildingReports] = useState<Report[]>([])
-  const [loading, setLoading] = useState(true)
-  const [generating, setGenerating] = useState(false)
-  const [error, setError] = useState('')
+  const [loading, setLoading]               = useState(true)
+  const [generating, setGenerating]         = useState(false)
+  const [error, setError]                   = useState('')
   const [form, setForm] = useState<ReportFormData>({
-    building_name: '',
-    building_address: '',
-    report_month: currentMonth,
-    report_year: currentYear,
-    total_rent_collected: '',
-    total_expenses: '',
-    late_payments: '',
-    management_fee: '',
-    vacant_units: '',
-    outstanding_balances: '',
-    upcoming_expirations: '',
-    ytd_rent: '',
-    ytd_expenses: '',
-    maintenance_issues: '',
-    tenant_issues: '',
-    notes: '',
-    rent_roll: [],
-    next_month_outlook: '',
+    building_name: '', building_address: '',
+    report_month: currentMonth, report_year: currentYear,
+    total_rent_collected: '', total_expenses: '', late_payments: '', management_fee: '',
+    vacant_units: '', outstanding_balances: '', upcoming_expirations: '',
+    ytd_rent: '', ytd_expenses: '',
+    maintenance_issues: '', tenant_issues: '', notes: '',
+    rent_roll: [], next_month_outlook: '',
   })
 
   useEffect(() => {
@@ -66,7 +55,7 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
         }
         if (rRes.ok) setBuildingReports(await rRes.json())
       } catch {
-        // Network error — building will show not-found state
+        // building will show not-found state
       } finally {
         setLoading(false)
       }
@@ -93,13 +82,13 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
           building_id: id,
           total_units: building?.total_units ?? 0,
           total_rent_collected: parseFloat(form.total_rent_collected),
-          total_expenses: parseFloat(form.total_expenses),
-          late_payments: parseFloat(form.late_payments) || 0,
-          management_fee: parseFloat(form.management_fee) || 0,
-          vacant_units: parseInt(form.vacant_units),
+          total_expenses:       parseFloat(form.total_expenses),
+          late_payments:        parseFloat(form.late_payments) || 0,
+          management_fee:       parseFloat(form.management_fee) || 0,
+          vacant_units:         parseInt(form.vacant_units),
           outstanding_balances: parseFloat(form.outstanding_balances) || 0,
-          ytd_rent: parseFloat(form.ytd_rent) || 0,
-          ytd_expenses: parseFloat(form.ytd_expenses) || 0,
+          ytd_rent:             parseFloat(form.ytd_rent) || 0,
+          ytd_expenses:         parseFloat(form.ytd_expenses) || 0,
         }),
       })
 
@@ -109,9 +98,7 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
           const data = await res.json()
           errorMsg = data.error || errorMsg
         } catch {
-          if (res.status === 504 || res.status === 524) {
-            errorMsg = 'Report generation timed out. Please try again.'
-          }
+          if (res.status === 504 || res.status === 524) errorMsg = 'Report generation timed out. Please try again.'
         }
         throw new Error(errorMsg)
       }
@@ -131,19 +118,19 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
     }))
   }
 
-  const inputClass = 'w-full bg-[#0a0c10] border border-[#1e2535] rounded-lg text-sm text-[#e2e8f0] placeholder-[#64748b] px-3 py-2.5 focus:outline-none focus:border-[#3b82f6]/50 focus:ring-1 focus:ring-[#3b82f6]/20 transition-all font-mono'
+  const inputClass = 'w-full bg-[#0e100d] border border-[#222620] rounded-sm text-xs text-[#eae6d6] placeholder-[#5c5850] px-3 py-2.5 focus:outline-none focus:border-[#c8a86a]/30 focus:ring-1 focus:ring-[#c8a86a]/10 transition-all'
   const textareaClass = `${inputClass} resize-none`
 
   if (loading) {
     return (
-      <div className="p-6 flex items-center justify-center h-64">
-        <Loader2 size={20} className="animate-spin text-[#64748b]" />
+      <div className="p-8 flex items-center justify-center h-64">
+        <Loader2 size={18} className="animate-spin text-[#5c5850]" />
       </div>
     )
   }
 
   if (!building) {
-    return <div className="p-6 text-[#64748b] text-sm">Building not found.</div>
+    return <div className="p-8 text-[#5c5850] text-sm">Building not found.</div>
   }
 
   const netPreview = form.total_rent_collected && form.total_expenses
@@ -166,66 +153,76 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
     { collected: 0, outstanding: 0, paidCount: 0, outstandingCount: 0, partialCount: 0, vacantCount: 0 }
   )
 
+  const labelClass = 'block text-[8px] text-[#5c5850] mb-1.5'
+  const sectionClass = 'bg-[#0e100d] border border-[#222620] rounded-sm p-4 space-y-3'
+  const sectionLabelClass = 'text-[8px] text-[#5c5850]'
+
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-8 max-w-4xl mx-auto">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-xs text-[#64748b] mb-6">
-        <Link href="/dashboard" className="hover:text-[#e2e8f0] transition-colors">Operations</Link>
-        <ChevronRight size={12} />
-        <span className="text-[#e2e8f0]">{building.name}</span>
+      <div
+        className="flex items-center gap-2 text-[10px] text-[#5c5850] mb-8 animate-in"
+        style={{ letterSpacing: '0.1em', animationDelay: '0ms' }}
+      >
+        <Link href="/dashboard" className="hover:text-[#eae6d6] transition-colors">OPERATIONS</Link>
+        <ChevronRight size={10} />
+        <span className="font-display italic text-sm text-[#9e9a8c]">{building.name}</span>
       </div>
 
       {/* Building header */}
-      <div className="flex items-start justify-between mb-8">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-lg bg-[#10141c] border border-[#1e2535] flex items-center justify-center">
-            <Building2 size={20} className="text-[#3b82f6]" />
+      <div className="flex items-start justify-between mb-8 animate-in" style={{ animationDelay: '60ms' }}>
+        <div className="flex items-start gap-5">
+          <div className="w-14 h-14 rounded-sm bg-[#101210] border border-[#222620] flex items-center justify-center flex-shrink-0">
+            <Building2 size={20} className="text-[#c8a86a]" style={{ opacity: 0.6 }} />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-[#e2e8f0] tracking-tight">{building.name}</h1>
-            <p className="text-sm text-[#94a3b8]">{building.address}</p>
-            <p className="text-[10px] text-[#64748b] mt-0.5 font-mono">{building.total_units} total units registered</p>
+            <h1 className="font-display text-4xl font-light italic text-[#eae6d6] leading-tight">{building.name}</h1>
+            <p className="text-sm text-[#9e9a8c] mt-1">{building.address}</p>
+            <p className="text-[9px] text-[#5c5850] mt-1" style={{ letterSpacing: '0.15em' }}>
+              {building.total_units} UNITS REGISTERED
+            </p>
           </div>
         </div>
         <Link
           href="/dashboard"
-          className="flex items-center gap-1.5 text-xs text-[#94a3b8] hover:text-[#e2e8f0] transition-colors border border-[#1e2535] rounded-lg px-3 py-2 hover:border-[#2a3350]"
+          className="flex items-center gap-1.5 text-[9px] text-[#9e9a8c] hover:text-[#eae6d6] transition-colors border border-[#222620] rounded-sm px-3 py-2 hover:border-[#2e3328]"
+          style={{ letterSpacing: '0.1em' }}
         >
-          <ArrowLeft size={13} />
-          Back
+          <ArrowLeft size={11} />
+          BACK
         </Link>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Form */}
-        <div className="lg:col-span-2">
-          <div className="bg-[#10141c] border border-[#1e2535] rounded-lg p-6">
-            <div className="flex items-center gap-2 mb-6 pb-4 border-b border-[#1e2535]">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#3b82f6] status-pulse" />
-              <span className="text-[10px] font-mono text-[#64748b] uppercase tracking-widest">Generate Owner Report</span>
+        <div className="lg:col-span-2 animate-in" style={{ animationDelay: '120ms' }}>
+          <div className="bg-[#101210] border border-[#222620] rounded-sm p-6">
+            <div className="flex items-center gap-2.5 mb-6 pb-4 border-b border-[#222620]">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#c8a86a] status-pulse" />
+              <span className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.22em' }}>
+                GENERATE OWNER REPORT
+              </span>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Report period */}
               <div>
-                <p className="text-[9px] font-mono text-[#64748b] uppercase tracking-widest mb-3">
-                  Report Period <span className="text-[#3b82f6]">*</span>
+                <p className={sectionLabelClass} style={{ letterSpacing: '0.2em' }}>
+                  REPORT PERIOD <span className="text-[#c8a86a]">*</span>
                 </p>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-3 mt-2">
                   <div>
-                    <label className="block text-[10px] font-mono text-[#94a3b8] uppercase tracking-widest mb-1.5">Month</label>
+                    <label className={labelClass} style={{ letterSpacing: '0.15em' }}>MONTH</label>
                     <select
                       value={form.report_month}
                       onChange={e => setForm(f => ({ ...f, report_month: parseInt(e.target.value) }))}
                       className={inputClass}
                     >
-                      {MONTHS.map((m, i) => (
-                        <option key={m} value={i + 1}>{m}</option>
-                      ))}
+                      {MONTHS.map((m, i) => <option key={m} value={i + 1}>{m}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[10px] font-mono text-[#94a3b8] uppercase tracking-widest mb-1.5">Year</label>
+                    <label className={labelClass} style={{ letterSpacing: '0.15em' }}>YEAR</label>
                     <select
                       value={form.report_year}
                       onChange={e => setForm(f => ({ ...f, report_year: parseInt(e.target.value) }))}
@@ -240,102 +237,82 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
               </div>
 
               {/* Rent Roll */}
-              <div className="bg-[#131822] border border-[#1e2535] rounded-lg p-4 space-y-3">
+              <div className={sectionClass}>
                 <div className="flex items-center justify-between">
-                  <p className="text-[9px] font-mono text-[#64748b] uppercase tracking-widest">Rent Roll</p>
+                  <p className={sectionLabelClass} style={{ letterSpacing: '0.2em' }}>RENT ROLL</p>
                   <button
                     type="button"
                     onClick={() => setForm(f => ({ ...f, rent_roll: [...f.rent_roll, { ...BLANK_ENTRY }] }))}
-                    className="flex items-center gap-1 text-[10px] font-mono text-[#3b82f6] hover:text-[#60a5fa] transition-colors"
+                    className="flex items-center gap-1 text-[9px] text-[#c8a86a] hover:text-[#eae6d6] transition-colors"
+                    style={{ letterSpacing: '0.1em' }}
                   >
-                    <Plus size={10} />
-                    Add Unit
+                    <Plus size={9} />
+                    ADD UNIT
                   </button>
                 </div>
 
                 {form.rent_roll.length === 0 ? (
-                  <p className="text-xs text-[#64748b] text-center py-2 italic">
-                    No units added. Click "Add Unit" to build the rent roll.
+                  <p className="text-xs text-[#5c5850] text-center py-3 italic font-display">
+                    No units added. Click &quot;Add Unit&quot; to build the rent roll.
                   </p>
                 ) : (
                   <>
-                    {/* Column headers */}
                     <div className="grid grid-cols-12 gap-1.5 px-0.5">
-                      {['Unit', 'Tenant', 'Rent', 'Status', 'Notes', ''].map((h, i) => (
-                        <span key={i} className={`text-[9px] font-mono text-[#64748b] uppercase tracking-widest ${
-                          i === 0 ? 'col-span-2' : i === 1 ? 'col-span-3' : i === 2 ? 'col-span-2' : i === 3 ? 'col-span-2' : i === 4 ? 'col-span-2' : 'col-span-1'
-                        }`}>{h}</span>
+                      {[['Unit','col-span-2'],['Tenant','col-span-3'],['Rent','col-span-2'],['Status','col-span-2'],['Notes','col-span-2'],['','col-span-1']].map(([h, c]) => (
+                        <span key={h} className={`text-[8px] text-[#5c5850] ${c}`} style={{ letterSpacing: '0.18em' }}>{h}</span>
                       ))}
                     </div>
 
-                    {/* Rows */}
                     {form.rent_roll.map((entry, idx) => (
                       <div key={idx} className="grid grid-cols-12 gap-1.5 items-center">
-                        <input
-                          type="text" placeholder="1A"
-                          value={entry.unit}
+                        <input type="text" placeholder="1A" value={entry.unit}
                           onChange={e => updateRentRollEntry(idx, 'unit', e.target.value)}
-                          className={`col-span-2 ${inputClass} py-2 text-xs`}
-                        />
-                        <input
-                          type="text" placeholder="Tenant"
-                          value={entry.tenant}
+                          className={`col-span-2 ${inputClass} py-2`} />
+                        <input type="text" placeholder="Tenant" value={entry.tenant}
                           onChange={e => updateRentRollEntry(idx, 'tenant', e.target.value)}
-                          className={`col-span-3 ${inputClass} py-2 text-xs`}
-                        />
+                          className={`col-span-3 ${inputClass} py-2`} />
                         <div className="col-span-2 relative">
-                          <DollarSign size={10} className="absolute left-2 top-1/2 -translate-y-1/2 text-[#64748b]" />
-                          <input
-                            type="number" step="0.01" min="0" placeholder="0"
-                            value={entry.rent}
+                          <DollarSign size={9} className="absolute left-2 top-1/2 -translate-y-1/2 text-[#5c5850]" />
+                          <input type="number" step="0.01" min="0" placeholder="0" value={entry.rent}
                             onChange={e => updateRentRollEntry(idx, 'rent', e.target.value)}
-                            className={`${inputClass} py-2 text-xs pl-5`}
-                          />
+                            className={`${inputClass} py-2 pl-5`} />
                         </div>
-                        <div className="col-span-2 relative">
-                          <select
-                            value={entry.status}
+                        <div className="col-span-2">
+                          <select value={entry.status}
                             onChange={e => updateRentRollEntry(idx, 'status', e.target.value)}
-                            className={`${inputClass} py-2 text-xs`}
-                            style={{ color: STATUS_COLORS[entry.status] }}
-                          >
-                            {(['Paid', 'Outstanding', 'Partial', 'Vacant'] as const).map(s => (
+                            className={`${inputClass} py-2`}
+                            style={{ color: STATUS_COLORS[entry.status] }}>
+                            {(['Paid','Outstanding','Partial','Vacant'] as const).map(s => (
                               <option key={s} value={s} style={{ color: STATUS_COLORS[s] }}>{s}</option>
                             ))}
                           </select>
                         </div>
-                        <input
-                          type="text" placeholder="Notes"
-                          value={entry.notes}
+                        <input type="text" placeholder="Notes" value={entry.notes}
                           onChange={e => updateRentRollEntry(idx, 'notes', e.target.value)}
-                          className={`col-span-2 ${inputClass} py-2 text-xs`}
-                        />
-                        <button
-                          type="button"
+                          className={`col-span-2 ${inputClass} py-2`} />
+                        <button type="button"
                           onClick={() => setForm(f => ({ ...f, rent_roll: f.rent_roll.filter((_, i) => i !== idx) }))}
-                          className="col-span-1 flex items-center justify-center text-[#64748b] hover:text-[#ef4444] transition-colors h-8"
-                        >
-                          <X size={13} />
+                          className="col-span-1 flex items-center justify-center text-[#5c5850] hover:text-[#c45c5c] transition-colors h-8">
+                          <X size={11} />
                         </button>
                       </div>
                     ))}
 
-                    {/* Totals */}
-                    <div className="flex items-center justify-between bg-[#0a0c10] border border-[#1e2535] rounded-lg px-3 py-2.5 mt-1">
-                      <div className="flex items-center gap-3 text-[9px] font-mono text-[#64748b] uppercase tracking-widest">
-                        <span>{form.rent_roll.length} units</span>
-                        {rentRollTotals.vacantCount > 0 && <span className="text-[#64748b]">{rentRollTotals.vacantCount} vacant</span>}
-                        {rentRollTotals.partialCount > 0 && <span className="text-[#f59e0b]">{rentRollTotals.partialCount} partial</span>}
+                    <div className="flex items-center justify-between bg-[#0b0c09] border border-[#222620] rounded-sm px-3 py-2.5 mt-1">
+                      <div className="flex items-center gap-3 text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.15em' }}>
+                        <span>{form.rent_roll.length} UNITS</span>
+                        {rentRollTotals.vacantCount > 0 && <span>{rentRollTotals.vacantCount} VACANT</span>}
+                        {rentRollTotals.partialCount > 0 && <span className="text-[#d48f4a]">{rentRollTotals.partialCount} PARTIAL</span>}
                       </div>
                       <div className="flex items-center gap-4">
                         <div className="text-right">
-                          <div className="text-[9px] font-mono text-[#64748b] uppercase tracking-widest">Collected</div>
-                          <div className="text-xs font-bold font-mono text-[#10b981]">{formatCurrency(rentRollTotals.collected)}</div>
+                          <div className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.15em' }}>COLLECTED</div>
+                          <div className="font-display text-base font-light text-[#5bba7a]">{formatCurrency(rentRollTotals.collected)}</div>
                         </div>
                         {rentRollTotals.outstanding > 0 && (
                           <div className="text-right">
-                            <div className="text-[9px] font-mono text-[#64748b] uppercase tracking-widest">Outstanding</div>
-                            <div className="text-xs font-bold font-mono text-[#ef4444]">{formatCurrency(rentRollTotals.outstanding)}</div>
+                            <div className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.15em' }}>OUTSTANDING</div>
+                            <div className="font-display text-base font-light text-[#c45c5c]">{formatCurrency(rentRollTotals.outstanding)}</div>
                           </div>
                         )}
                       </div>
@@ -345,80 +322,67 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
               </div>
 
               {/* Financial data */}
-              <div className="bg-[#131822] border border-[#1e2535] rounded-lg p-4 space-y-3">
-                <p className="text-[9px] font-mono text-[#64748b] uppercase tracking-widest">
-                  Financial Data <span className="text-[#3b82f6]">*</span>
+              <div className={sectionClass}>
+                <p className={sectionLabelClass} style={{ letterSpacing: '0.2em' }}>
+                  FINANCIAL DATA <span className="text-[#c8a86a]">*</span>
                 </p>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[10px] font-mono text-[#94a3b8] uppercase tracking-widest mb-1.5">Rent Collected</label>
+                    <label className={labelClass} style={{ letterSpacing: '0.15em' }}>RENT COLLECTED</label>
                     <div className="relative">
-                      <DollarSign size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
-                      <input
-                        type="number" step="0.01" min="0" placeholder="0.00"
+                      <DollarSign size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5850]" />
+                      <input type="number" step="0.01" min="0" placeholder="0.00"
                         value={form.total_rent_collected}
                         onChange={e => setForm(f => ({ ...f, total_rent_collected: e.target.value }))}
-                        className={`${inputClass} pl-7`}
-                        required
-                      />
+                        className={`${inputClass} pl-7`} required />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-[10px] font-mono text-[#94a3b8] uppercase tracking-widest mb-1.5">Total Expenses</label>
+                    <label className={labelClass} style={{ letterSpacing: '0.15em' }}>TOTAL EXPENSES</label>
                     <div className="relative">
-                      <DollarSign size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
-                      <input
-                        type="number" step="0.01" min="0" placeholder="0.00"
+                      <DollarSign size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5850]" />
+                      <input type="number" step="0.01" min="0" placeholder="0.00"
                         value={form.total_expenses}
                         onChange={e => setForm(f => ({ ...f, total_expenses: e.target.value }))}
-                        className={`${inputClass} pl-7`}
-                        required
-                      />
+                        className={`${inputClass} pl-7`} required />
                     </div>
                   </div>
                 </div>
 
                 {netPreview !== null && (
-                  <div className="flex items-center justify-between bg-[#0a0c10] border border-[#1e2535] rounded-lg p-3">
-                    <div className="flex items-center gap-2">
-                      <Zap size={11} className="text-[#64748b]" />
-                      <span className="text-[10px] font-mono text-[#64748b] uppercase tracking-widest">Net Operating Income</span>
+                  <div className="flex items-center justify-between bg-[#0b0c09] border border-[#222620] rounded-sm p-3">
+                    <span className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.2em' }}>NET OPERATING INCOME</span>
+                    <div className="text-right">
+                      <div className="font-display text-2xl font-light leading-none" style={{ color: netPreview >= 0 ? '#5bba7a' : '#c45c5c' }}>
+                        {formatCurrency(netPreview)}
+                      </div>
                     </div>
-                    <span className={`text-base font-bold font-mono ${netPreview >= 0 ? 'text-[#10b981]' : 'text-[#ef4444]'}`}>
-                      {formatCurrency(netPreview)}
-                    </span>
                   </div>
                 )}
               </div>
 
-              {/* Additional financial fields */}
-              <div className="bg-[#131822] border border-[#1e2535] rounded-lg p-4 space-y-3">
-                <p className="text-[9px] font-mono text-[#64748b] uppercase tracking-widest">
-                  Additional Financial Details
-                </p>
+              {/* Additional financial */}
+              <div className={sectionClass}>
+                <p className={sectionLabelClass} style={{ letterSpacing: '0.2em' }}>ADDITIONAL FINANCIAL</p>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[10px] font-mono text-[#94a3b8] uppercase tracking-widest mb-1.5">Late Payments Collected</label>
+                    <label className={labelClass} style={{ letterSpacing: '0.15em' }}>LATE PAYMENTS</label>
                     <div className="relative">
-                      <DollarSign size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
-                      <input
-                        type="number" step="0.01" min="0" placeholder="0.00"
+                      <DollarSign size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5850]" />
+                      <input type="number" step="0.01" min="0" placeholder="0.00"
                         value={form.late_payments}
                         onChange={e => setForm(f => ({ ...f, late_payments: e.target.value }))}
-                        className={`${inputClass} pl-7`}
-                      />
+                        className={`${inputClass} pl-7`} />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-[10px] font-mono text-[#94a3b8] uppercase tracking-widest mb-1.5">Management Fee Charged</label>
+                    <label className={labelClass} style={{ letterSpacing: '0.15em' }}>MANAGEMENT FEE</label>
                     <div className="relative">
-                      <DollarSign size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
-                      <input
-                        type="number" step="0.01" min="0" placeholder="0.00"
+                      <DollarSign size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5850]" />
+                      <input type="number" step="0.01" min="0" placeholder="0.00"
                         value={form.management_fee}
                         onChange={e => setForm(f => ({ ...f, management_fee: e.target.value }))}
-                        className={`${inputClass} pl-7`}
-                      />
+                        className={`${inputClass} pl-7`} />
                     </div>
                   </div>
                 </div>
@@ -426,188 +390,164 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
 
               {/* Occupancy */}
               <div>
-                <label className="block text-[10px] font-mono text-[#94a3b8] uppercase tracking-widest mb-1.5">
-                  Vacant Units <span className="text-[#3b82f6]">*</span>
+                <label className={labelClass} style={{ letterSpacing: '0.15em' }}>
+                  VACANT UNITS <span className="text-[#c8a86a]">*</span>
                 </label>
                 <div className="relative">
-                  <Home size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
-                  <input
-                    type="number" min="0" max={building.total_units} placeholder="0"
+                  <Home size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5850]" />
+                  <input type="number" min="0" max={building.total_units} placeholder="0"
                     value={form.vacant_units}
                     onChange={e => setForm(f => ({ ...f, vacant_units: e.target.value }))}
-                    className={`${inputClass} pl-7`}
-                    required
-                  />
+                    className={`${inputClass} pl-7`} required />
                 </div>
                 {occupancyPreview !== null && (
-                  <div className="mt-2 flex items-center gap-2">
-                    <div className="flex-1 h-1.5 bg-[#131822] rounded-full overflow-hidden">
+                  <div className="mt-2.5 flex items-center gap-3">
+                    <div className="flex-1 h-px bg-[#222620] rounded-full overflow-hidden relative">
                       <div
-                        className="h-full bg-[#3b82f6] rounded-full transition-all"
-                        style={{ width: `${occupancyPreview}%` }}
+                        className="absolute left-0 top-0 h-full rounded-full transition-all"
+                        style={{ width: `${occupancyPreview}%`, background: '#c8a86a' }}
                       />
                     </div>
-                    <span className="text-[10px] font-mono text-[#3b82f6]">{occupancyPreview}% occupied</span>
+                    <span className="text-[9px] text-[#c8a86a]" style={{ letterSpacing: '0.1em' }}>
+                      {occupancyPreview}% OCCUPIED
+                    </span>
                   </div>
                 )}
               </div>
 
               {/* Tenant status */}
-              <div className="bg-[#131822] border border-[#1e2535] rounded-lg p-4 space-y-3">
-                <p className="text-[9px] font-mono text-[#64748b] uppercase tracking-widest">
-                  Tenant Status
-                </p>
+              <div className={sectionClass}>
+                <p className={sectionLabelClass} style={{ letterSpacing: '0.2em' }}>TENANT STATUS</p>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[10px] font-mono text-[#94a3b8] uppercase tracking-widest mb-1.5">Outstanding Balances</label>
+                    <label className={labelClass} style={{ letterSpacing: '0.15em' }}>OUTSTANDING BALANCES</label>
                     <div className="relative">
-                      <DollarSign size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
-                      <input
-                        type="number" step="0.01" min="0" placeholder="0.00"
+                      <DollarSign size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5850]" />
+                      <input type="number" step="0.01" min="0" placeholder="0.00"
                         value={form.outstanding_balances}
                         onChange={e => setForm(f => ({ ...f, outstanding_balances: e.target.value }))}
-                        className={`${inputClass} pl-7`}
-                      />
+                        className={`${inputClass} pl-7`} />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-[10px] font-mono text-[#94a3b8] uppercase tracking-widest mb-1.5">Upcoming Lease Expirations</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Unit 3A — Jun 30, Unit 7B — Jul 15"
+                    <label className={labelClass} style={{ letterSpacing: '0.15em' }}>UPCOMING EXPIRATIONS</label>
+                    <input type="text" placeholder="Unit 3A — Jun 30, Unit 7B — Jul 15"
                       value={form.upcoming_expirations}
                       onChange={e => setForm(f => ({ ...f, upcoming_expirations: e.target.value }))}
-                      className={inputClass}
-                    />
+                      className={inputClass} />
                   </div>
                 </div>
               </div>
 
               {/* Year to date */}
-              <div className="bg-[#131822] border border-[#1e2535] rounded-lg p-4 space-y-3">
-                <p className="text-[9px] font-mono text-[#64748b] uppercase tracking-widest">
-                  Year-to-Date Comparison
-                </p>
+              <div className={sectionClass}>
+                <p className={sectionLabelClass} style={{ letterSpacing: '0.2em' }}>YEAR-TO-DATE COMPARISON</p>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[10px] font-mono text-[#94a3b8] uppercase tracking-widest mb-1.5">YTD Rent Collected</label>
+                    <label className={labelClass} style={{ letterSpacing: '0.15em' }}>YTD RENT COLLECTED</label>
                     <div className="relative">
-                      <DollarSign size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
-                      <input
-                        type="number" step="0.01" min="0" placeholder="0.00"
+                      <DollarSign size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5850]" />
+                      <input type="number" step="0.01" min="0" placeholder="0.00"
                         value={form.ytd_rent}
                         onChange={e => setForm(f => ({ ...f, ytd_rent: e.target.value }))}
-                        className={`${inputClass} pl-7`}
-                      />
+                        className={`${inputClass} pl-7`} />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-[10px] font-mono text-[#94a3b8] uppercase tracking-widest mb-1.5">YTD Expenses</label>
+                    <label className={labelClass} style={{ letterSpacing: '0.15em' }}>YTD EXPENSES</label>
                     <div className="relative">
-                      <DollarSign size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
-                      <input
-                        type="number" step="0.01" min="0" placeholder="0.00"
+                      <DollarSign size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5850]" />
+                      <input type="number" step="0.01" min="0" placeholder="0.00"
                         value={form.ytd_expenses}
                         onChange={e => setForm(f => ({ ...f, ytd_expenses: e.target.value }))}
-                        className={`${inputClass} pl-7`}
-                      />
+                        className={`${inputClass} pl-7`} />
                     </div>
                   </div>
                 </div>
                 {form.ytd_rent && form.ytd_expenses && (
-                  <div className="flex items-center justify-between bg-[#0a0c10] border border-[#1e2535] rounded-lg p-3">
-                    <div className="flex items-center gap-2">
-                      <Zap size={11} className="text-[#64748b]" />
-                      <span className="text-[10px] font-mono text-[#64748b] uppercase tracking-widest">YTD Net Operating Income</span>
-                    </div>
-                    <span className={`text-base font-bold font-mono ${
-                      parseFloat(form.ytd_rent) - parseFloat(form.ytd_expenses) >= 0 ? 'text-[#10b981]' : 'text-[#ef4444]'
-                    }`}>
+                  <div className="flex items-center justify-between bg-[#0b0c09] border border-[#222620] rounded-sm p-3">
+                    <span className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.2em' }}>YTD NET INCOME</span>
+                    <div className="font-display text-2xl font-light leading-none" style={{
+                      color: parseFloat(form.ytd_rent) - parseFloat(form.ytd_expenses) >= 0 ? '#5bba7a' : '#c45c5c'
+                    }}>
                       {formatCurrency(parseFloat(form.ytd_rent) - parseFloat(form.ytd_expenses))}
-                    </span>
+                    </div>
                   </div>
                 )}
               </div>
 
               {/* Narrative fields */}
               <div>
-                <label className="block text-[10px] font-mono text-[#94a3b8] uppercase tracking-widest mb-1.5">Maintenance Issues This Month</label>
-                <textarea
-                  rows={3}
-                  placeholder="Describe repairs, vendor work, ongoing issues, preventative maintenance..."
+                <label className={labelClass} style={{ letterSpacing: '0.15em' }}>MAINTENANCE ISSUES</label>
+                <textarea rows={3}
+                  placeholder="Describe repairs, vendor work, ongoing issues, preventative maintenance…"
                   value={form.maintenance_issues}
                   onChange={e => setForm(f => ({ ...f, maintenance_issues: e.target.value }))}
-                  className={textareaClass}
-                />
+                  className={textareaClass} />
               </div>
 
               <div>
-                <label className="block text-[10px] font-mono text-[#94a3b8] uppercase tracking-widest mb-1.5">Tenant Issues</label>
-                <textarea
-                  rows={3}
-                  placeholder="Late payments, complaints, lease renewals, move-ins/move-outs, disputes..."
+                <label className={labelClass} style={{ letterSpacing: '0.15em' }}>TENANT ISSUES</label>
+                <textarea rows={3}
+                  placeholder="Late payments, complaints, lease renewals, move-ins/outs, disputes…"
                   value={form.tenant_issues}
                   onChange={e => setForm(f => ({ ...f, tenant_issues: e.target.value }))}
-                  className={textareaClass}
-                />
+                  className={textareaClass} />
               </div>
 
               <div>
-                <label className="block text-[10px] font-mono text-[#94a3b8] uppercase tracking-widest mb-1.5">Notes for Owner</label>
-                <textarea
-                  rows={3}
-                  placeholder="Capital improvements planned, market conditions, upcoming decisions, special situations..."
+                <label className={labelClass} style={{ letterSpacing: '0.15em' }}>NOTES FOR OWNER</label>
+                <textarea rows={3}
+                  placeholder="Capital improvements, market conditions, upcoming decisions, special situations…"
                   value={form.notes}
                   onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
-                  className={textareaClass}
-                />
+                  className={textareaClass} />
               </div>
 
               {/* Next Month Outlook */}
-              <div className="bg-[#131822] border border-[#1e2535] rounded-lg p-4 space-y-3">
+              <div className={sectionClass}>
                 <div className="flex items-center gap-2">
-                  <Zap size={11} className="text-[#3b82f6]" />
-                  <p className="text-[9px] font-mono text-[#64748b] uppercase tracking-widest">Next Month Outlook</p>
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#c8a86a] opacity-60" />
+                  <p className={sectionLabelClass} style={{ letterSpacing: '0.2em' }}>NEXT MONTH OUTLOOK</p>
                 </div>
-                <textarea
-                  rows={4}
-                  placeholder={`Planned maintenance or repairs\nExpected vacancies or move-outs\nPlanned rent increases\nAny known issues or risks`}
+                <textarea rows={4}
+                  placeholder={`Planned maintenance or repairs\nExpected vacancies or move-outs\nPlanned rent increases\nKnown issues or risks`}
                   value={form.next_month_outlook}
                   onChange={e => setForm(f => ({ ...f, next_month_outlook: e.target.value }))}
-                  className={textareaClass}
-                />
-                <p className="text-[9px] text-[#64748b] font-mono">
-                  The AI will include a dedicated "Looking Ahead" section based on these inputs.
+                  className={textareaClass} />
+                <p className="text-[9px] text-[#5c5850]">
+                  The AI will include a dedicated &quot;Looking Ahead&quot; section based on these inputs.
                 </p>
               </div>
 
               {error && (
-                <div className="flex items-start gap-2.5 bg-[#ef4444]/5 border border-[#ef4444]/20 rounded-lg p-3">
-                  <AlertCircle size={14} className="text-[#ef4444] flex-shrink-0 mt-0.5" />
-                  <span className="text-xs text-[#ef4444]">{error}</span>
+                <div className="flex items-start gap-3 bg-[#2e1414] border border-[#c45c5c]/20 rounded-sm p-3">
+                  <AlertCircle size={13} className="text-[#c45c5c] flex-shrink-0 mt-0.5" />
+                  <span className="text-xs text-[#c45c5c]">{error}</span>
                 </div>
               )}
 
               <button
                 type="submit"
                 disabled={generating}
-                className="w-full flex items-center justify-center gap-2.5 bg-[#3b82f6] hover:bg-[#2563eb] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-sm py-3 rounded-lg transition-colors"
+                className="w-full flex items-center justify-center gap-2.5 bg-[#c8a86a]/10 hover:bg-[#c8a86a]/16 border border-[#c8a86a]/30 hover:border-[#c8a86a]/50 disabled:opacity-40 disabled:cursor-not-allowed text-[#c8a86a] text-[10px] py-4 rounded-sm transition-all"
+                style={{ letterSpacing: '0.2em' }}
               >
                 {generating ? (
                   <>
-                    <Loader2 size={15} className="animate-spin" />
-                    AI Generating Report…
+                    <Loader2 size={13} className="animate-spin" />
+                    AI GENERATING REPORT…
                   </>
                 ) : (
                   <>
-                    <Zap size={15} />
-                    Generate Owner Report
+                    <FileText size={13} />
+                    GENERATE OWNER REPORT
                   </>
                 )}
               </button>
 
               {generating && (
-                <p className="text-center text-xs text-[#64748b]">
+                <p className="text-center text-[10px] text-[#5c5850]" style={{ letterSpacing: '0.1em' }}>
                   This takes 15–30 seconds. Sit tight.
                 </p>
               )}
@@ -616,16 +556,16 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
         </div>
 
         {/* Past reports */}
-        <div>
-          <div className="flex items-center gap-2 mb-4">
-            <FileText size={12} className="text-[#64748b]" />
-            <h3 className="text-[10px] font-mono text-[#64748b] uppercase tracking-widest">Past Reports</h3>
+        <div className="animate-in" style={{ animationDelay: '200ms' }}>
+          <div className="flex items-center gap-2.5 mb-4">
+            <FileText size={11} className="text-[#5c5850]" />
+            <h3 className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.22em' }}>PAST REPORTS</h3>
           </div>
 
           {buildingReports.length === 0 ? (
-            <div className="bg-[#10141c] border border-[#1e2535] rounded-lg p-6 text-center">
-              <p className="text-xs text-[#94a3b8]">No reports yet</p>
-              <p className="text-[10px] text-[#64748b] mt-1">Generate your first report</p>
+            <div className="bg-[#101210] border border-[#222620] rounded-sm p-6 text-center">
+              <p className="font-display italic text-sm text-[#9e9a8c]">No reports yet</p>
+              <p className="text-[10px] text-[#5c5850] mt-1">Generate your first report</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -633,14 +573,16 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
                 <Link
                   key={r.id}
                   href={`/dashboard/reports/${r.id}`}
-                  className="block bg-[#10141c] border border-[#1e2535] rounded-lg p-3.5 hover:border-[#2a3350] hover:bg-[#131822] transition-all"
+                  className="block bg-[#101210] border border-[#222620] rounded-sm p-4 hover:border-[#2e3328] hover:bg-[#161914] transition-all group"
                 >
-                  <div className="text-xs font-medium text-[#e2e8f0]">{formatMonth(r.report_month, r.report_year)}</div>
-                  <div className="flex items-center justify-between mt-1.5">
-                    <span className={`text-xs font-bold font-mono ${Number(r.net_income) >= 0 ? 'text-[#10b981]' : 'text-[#ef4444]'}`}>
+                  <div className="font-display italic text-sm text-[#c8c4b4] group-hover:text-[#eae6d6] transition-colors">
+                    {formatMonth(r.report_month, r.report_year)}
+                  </div>
+                  <div className="flex items-center justify-between mt-2">
+                    <div className="font-display text-xl font-light leading-none" style={{ color: Number(r.net_income) >= 0 ? '#5bba7a' : '#c45c5c' }}>
                       {formatCurrency(Number(r.net_income))}
-                    </span>
-                    <span className="text-[9px] text-[#64748b] font-mono">NOI</span>
+                    </div>
+                    <div className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.15em' }}>NOI</div>
                   </div>
                 </Link>
               ))}
