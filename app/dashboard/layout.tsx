@@ -11,17 +11,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="h-16 flex items-center px-5 border-b border-[#222620]">
           <Link href="/dashboard" className="flex items-center gap-3 group">
             <div className="w-9 h-9 rounded-sm border border-[#d4b070]/30 bg-[#d4b070]/06 flex items-center justify-center flex-shrink-0 group-hover:border-[#d4b070]/50 group-hover:bg-[#d4b070]/10 transition-all">
-              <span className="font-display text-xl font-semibold text-[#d4b070] leading-none">K</span>
+              <span className="font-display text-xl font-semibold text-[#d4b070] leading-none">D</span>
             </div>
             <div>
               <div
                 className="font-display text-sm font-semibold text-[#eae6d6] leading-none"
                 style={{ letterSpacing: '0.22em' }}
               >
-                KINYU
+                DOMIS
               </div>
               <div className="text-[10px] text-[#7a7468] mt-1 leading-none" style={{ letterSpacing: '0.3em' }}>
-                REALTY
+                PLATFORM
               </div>
             </div>
           </Link>

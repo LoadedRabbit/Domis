@@ -82,7 +82,7 @@ export default function DashboardPage() {
         <div className="flex items-center gap-3 mt-2">
           <div className="h-px flex-1 bg-gradient-to-r from-[#d4b070]/40 to-transparent max-w-48" />
           <p className="text-xs text-[#7a7468]" style={{ letterSpacing: '0.15em' }}>
-            KINYU REALTY AND MANAGEMENT CORP
+            PROPERTY MANAGEMENT
           </p>
         </div>
       </div>

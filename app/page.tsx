@@ -36,20 +36,20 @@ export default async function Root() {
 
         <div className="flex items-center justify-center gap-4 mb-4">
           <div className="w-14 h-14 rounded-sm border border-[#d4b070]/30 bg-[#d4b070]/06 flex items-center justify-center">
-            <span className="font-display text-3xl font-semibold text-[#d4b070] leading-none">K</span>
+            <span className="font-display text-3xl font-semibold text-[#d4b070] leading-none">D</span>
           </div>
           <div className="text-left">
             <div
               className="font-display text-3xl font-light text-[#eae6d6] leading-none"
               style={{ letterSpacing: '0.22em' }}
             >
-              KINYU
+              DOMIS
             </div>
             <div
               className="text-[10px] text-[#7a7468] mt-1.5 leading-none"
               style={{ letterSpacing: '0.32em' }}
             >
-              REALTY AND MANAGEMENT
+              PROPERTY MANAGEMENT
             </div>
           </div>
         </div>

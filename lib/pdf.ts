@@ -85,7 +85,7 @@ export async function downloadReportAsPDF(report: {
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(8.5)
   tc(col.light)
-  doc.text('KINYU REALTY AND MANAGEMENT CORP', ML, y)
+  doc.text('PROPERTY MANAGEMENT', ML, y)
   y += 22
 
   doc.setFont('helvetica', 'bold')

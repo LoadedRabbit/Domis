@@ -8,10 +8,10 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
       <header className="h-16 flex-shrink-0 flex items-center justify-between px-6 border-b border-[#222620] bg-[#0e100d]">
         <Link href="/portal" className="flex items-center gap-3 group">
           <div className="w-8 h-8 rounded-sm border border-[#d4b070]/30 bg-[#d4b070]/06 flex items-center justify-center group-hover:border-[#d4b070]/50 transition-all">
-            <span className="font-display text-lg font-semibold text-[#d4b070] leading-none">K</span>
+            <span className="font-display text-lg font-semibold text-[#d4b070] leading-none">D</span>
           </div>
           <div>
-            <div className="font-display text-sm font-semibold text-[#eae6d6] leading-none" style={{ letterSpacing: '0.2em' }}>KINYU</div>
+            <div className="font-display text-sm font-semibold text-[#eae6d6] leading-none" style={{ letterSpacing: '0.2em' }}>DOMIS</div>
             <div className="text-[9px] text-[#7a7468] mt-0.5 leading-none" style={{ letterSpacing: '0.28em' }}>TENANT PORTAL</div>
           </div>
         </Link>
