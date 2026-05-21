@@ -59,7 +59,7 @@ ${data.rentRoll.map(e =>
 Collected: ${formatCurrency(rentRollCollected)} | Outstanding/Partial: ${formatCurrency(rentRollOutstanding)}`
     : 'RENT ROLL: Not provided.'
 
-  const prompt = `You are a property manager at Kinyu Realty writing a monthly owner report. Be concise, specific, and professional.
+  const prompt = `You are a property manager writing a monthly owner report. Be concise, specific, and professional.
 
 ${data.buildingName} | ${data.address} | ${MONTHS[data.month - 1]} ${data.year}
 
@@ -122,7 +122,7 @@ export async function draftCommunicationResponse(input: {
     .map(m => `[${m.timestamp}] ${m.role === 'tenant' ? input.tenantName : 'Manager'}: ${m.body}`)
     .join('\n\n')
 
-  const prompt = `You are a professional property manager at Kinyu Realty and Management Corp.
+  const prompt = `You are a professional property manager.
 Draft a professional, empathetic, and clear response to a tenant communication.
 
 TENANT: ${input.tenantName}
@@ -136,7 +136,7 @@ ${historyBlock}
 
 Write a professional manager response. Be specific, use a helpful and respectful tone.
 Do not include greetings like "Dear [Name]" — start directly with the response body.
-3-5 sentences. Sign off with "— Kinyu Realty Management"`
+3-5 sentences. Sign off with "— Property Management"`
 
   const stream = anthropic.messages.stream({
     model: 'claude-sonnet-4-6',
@@ -225,7 +225,7 @@ State that the file will be forwarded to legal counsel if payment is not receive
 This should be comprehensive — 4-6 paragraphs. Include a formal letterhead format.`,
   }
 
-  const prompt = `You are drafting a formal rent delinquency notice on behalf of Kinyu Realty and Management Corp.
+  const prompt = `You are drafting a formal rent delinquency notice on behalf of the property management company.
 
 NOTICE TYPE: ${noticeLabels[input.noticeType]}
 TENANT: ${input.tenantName}
@@ -240,7 +240,7 @@ ${prevNoticeBlock}
 
 ${typeInstructions[input.noticeType]}
 
-Use formal letter format. Include today's date. Sign as "Kinyu Realty and Management Corp — Management Office".`
+Use formal letter format. Include today's date. Sign as "Property Management — Management Office".`
 
   const stream = anthropic.messages.stream({
     model: 'claude-sonnet-4-6',

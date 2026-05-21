@@ -219,7 +219,7 @@ export async function downloadReportAsPDF(report: {
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(8)
     tc(col.light)
-    doc.text('Kinyu Realty and Management Corp — Confidential', ML, fy)
+    doc.text('Property Management — Confidential', ML, fy)
     doc.text(`Page ${p} of ${totalPages}`, PW / 2, fy, { align: 'center' })
     doc.text(`Generated ${genDate}`, PW - MR, fy, { align: 'right' })
   }

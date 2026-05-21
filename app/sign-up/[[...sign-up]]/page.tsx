@@ -10,7 +10,7 @@ export default function SignUpPage() {
           <div className="w-2 h-2 rounded-full bg-[#00d4aa] status-pulse" />
           <span className="text-xs font-mono tracking-[0.2em] text-[#00d4aa] uppercase">System Online</span>
         </div>
-        <h1 className="text-2xl font-bold text-[#c8d3e8] tracking-tight">Kinyu Realty</h1>
+        <h1 className="text-2xl font-bold text-[#c8d3e8] tracking-tight">Domis</h1>
         <p className="text-sm text-[#7a8aaa] mt-1">Property Management System</p>
       </div>
 
