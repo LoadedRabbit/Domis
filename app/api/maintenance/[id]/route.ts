@@ -46,7 +46,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     const allowed = ['status', 'contractor_name', 'contractor_contact', 'scheduled_date', 'manager_notes']
     const updates: Record<string, unknown> = {}
     for (const key of allowed) {
-      if (key in body) updates[key] = body[key]
+      if (key in body) {
+        // Convert empty string to null for DATE columns so PostgreSQL doesn't reject it
+        updates[key] = (key === 'scheduled_date' && body[key] === '') ? null : body[key]
+      }
     }
 
     const supabase = createServerClient()
