@@ -12,7 +12,7 @@ import { formatCurrency, formatMonth } from '@/lib/utils'
 import { downloadReportAsPDF } from '@/lib/pdf'
 
 const SECTION_COLORS: Record<string, string> = {
-  'EXECUTIVE SUMMARY':               '#c8a86a',
+  'EXECUTIVE SUMMARY':               '#d4b070',
   'FINANCIAL SUMMARY':               '#5bba7a',
   'OCCUPANCY REPORT':                '#7ab4e0',
   'MAINTENANCE SUMMARY':             '#d48f4a',
@@ -24,7 +24,7 @@ const SECTION_COLORS: Record<string, string> = {
 }
 
 function sectionColor(heading: string): string {
-  return SECTION_COLORS[heading.toUpperCase()] ?? '#c8a86a'
+  return SECTION_COLORS[heading.toUpperCase()] ?? '#d4b070'
 }
 
 function ReportSection({ heading, body, index }: { heading: string; body: string; index: number }) {
@@ -85,7 +85,7 @@ function ReportSection({ heading, body, index }: { heading: string; body: string
         </span>
         <div className="w-px h-4 bg-[#222620]" />
         <h3
-          className="text-[9px]"
+          className="text-[11px]"
           style={{ color, letterSpacing: '0.2em' }}
         >
           {heading.toUpperCase()}
@@ -151,7 +151,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
   if (loading) {
     return (
       <div className="p-8 flex items-center justify-center h-64">
-        <Loader2 size={18} className="animate-spin text-[#5c5850]" />
+        <Loader2 size={18} className="animate-spin text-[#7a7468]" />
       </div>
     )
   }
@@ -165,7 +165,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
   }
 
   if (!report) {
-    return <div className="p-8 text-sm text-[#5c5850]">Report not found.</div>
+    return <div className="p-8 text-sm text-[#7a7468]">Report not found.</div>
   }
 
   const noi    = Number(report.net_income)
@@ -174,7 +174,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
   return (
     <div className="p-8 max-w-4xl mx-auto">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-[10px] text-[#5c5850] mb-8 animate-in" style={{ letterSpacing: '0.1em', animationDelay: '0ms' }}>
+      <div className="flex items-center gap-2 text-[10px] text-[#7a7468] mb-8 animate-in" style={{ letterSpacing: '0.1em', animationDelay: '0ms' }}>
         <Link href="/dashboard" className="hover:text-[#eae6d6] transition-colors">OPERATIONS</Link>
         <ChevronRight size={10} />
         <Link href="/dashboard/reports" className="hover:text-[#eae6d6] transition-colors">REPORTS</Link>
@@ -188,24 +188,24 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
           <div className="min-w-0">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-1.5 h-1.5 rounded-full bg-[#5bba7a] status-pulse" />
-              <span className="text-[8px] text-[#5bba7a]" style={{ letterSpacing: '0.25em' }}>GENERATED</span>
+              <span className="text-[10px] text-[#5bba7a]" style={{ letterSpacing: '0.25em' }}>GENERATED</span>
             </div>
             <h1 className="font-display text-4xl font-light text-[#eae6d6] leading-tight mb-2">
               {formatMonth(report.report_month, report.report_year)}
-              <span className="text-[#5c5850]"> / Owner Report</span>
+              <span className="text-[#7a7468]"> / Owner Report</span>
             </h1>
             <div className="flex items-center gap-2">
-              <Building2 size={11} className="text-[#5c5850] flex-shrink-0" />
-              <span className="font-display text-lg italic text-[#c8a86a]">{report.building_name}</span>
+              <Building2 size={11} className="text-[#7a7468] flex-shrink-0" />
+              <span className="font-display text-lg italic text-[#d4b070]">{report.building_name}</span>
               <span className="text-[#222620]">·</span>
-              <span className="text-xs text-[#5c5850] truncate">{report.building_address}</span>
+              <span className="text-xs text-[#7a7468] truncate">{report.building_address}</span>
             </div>
           </div>
 
           <div className="flex items-center gap-2 flex-shrink-0">
             <Link
               href="/dashboard/reports"
-              className="flex items-center gap-1.5 text-[9px] text-[#9e9a8c] hover:text-[#eae6d6] transition-colors px-3 py-2 border border-[#222620] rounded-sm hover:border-[#2e3328]"
+              className="flex items-center gap-1.5 text-[11px] text-[#9e9a8c] hover:text-[#eae6d6] transition-colors px-3 py-2 border border-[#222620] rounded-sm hover:border-[#2e3328]"
               style={{ letterSpacing: '0.1em' }}
             >
               <ArrowLeft size={11} />
@@ -214,7 +214,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
             <button
               onClick={handleDownload}
               disabled={downloading}
-              className="flex items-center gap-1.5 text-[9px] bg-[#c8a86a]/10 hover:bg-[#c8a86a]/18 disabled:opacity-40 text-[#c8a86a] border border-[#c8a86a]/30 hover:border-[#c8a86a]/50 px-3 py-2 rounded-sm transition-all"
+              className="flex items-center gap-1.5 text-[11px] bg-[#d4b070]/10 hover:bg-[#d4b070]/18 disabled:opacity-40 text-[#d4b070] border border-[#d4b070]/30 hover:border-[#d4b070]/50 px-3 py-2 rounded-sm transition-all"
               style={{ letterSpacing: '0.12em' }}
             >
               {downloading ? <Loader2 size={11} className="animate-spin" /> : <Download size={11} />}
@@ -226,14 +226,14 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
         {/* Financial summary */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-5 border-t border-[#222620]">
           {[
-            { label: 'Rent Collected', value: formatCurrency(Number(report.total_rent_collected)), icon: DollarSign, color: '#c8a86a' },
+            { label: 'Rent Collected', value: formatCurrency(Number(report.total_rent_collected)), icon: DollarSign, color: '#d4b070' },
             { label: 'Total Expenses', value: formatCurrency(Number(report.total_expenses)),       icon: DollarSign, color: '#d48f4a' },
             { label: 'Net Income',     value: formatCurrency(noi),                                icon: noiPos ? TrendingUp : TrendingDown, color: noiPos ? '#5bba7a' : '#c45c5c' },
             { label: 'Vacant Units',   value: report.vacant_units.toString(),                    icon: Home,       color: '#9e9a8c' },
           ].map(({ label, value, icon: Icon, color }) => (
             <div key={label} className="bg-[#0e100d] border border-[#222620] rounded-sm p-3">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.18em' }}>{label.toUpperCase()}</span>
+                <span className="text-[10px] text-[#7a7468]" style={{ letterSpacing: '0.18em' }}>{label.toUpperCase()}</span>
                 <Icon size={10} style={{ color, opacity: 0.6 }} />
               </div>
               <div className="font-display text-xl font-light leading-none" style={{ color }}>{value}</div>
@@ -251,11 +251,11 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
         ].map(({ icon: Icon, label, value }) => (
           <div key={label} className="bg-[#101210] border border-[#222620] rounded-sm p-3.5">
             <div className="flex items-center gap-1.5 mb-2">
-              <Icon size={10} className="text-[#5c5850]" />
-              <span className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.2em' }}>{label.toUpperCase()}</span>
+              <Icon size={10} className="text-[#7a7468]" />
+              <span className="text-[10px] text-[#7a7468]" style={{ letterSpacing: '0.2em' }}>{label.toUpperCase()}</span>
             </div>
             <p className="text-xs text-[#9e9a8c] leading-relaxed line-clamp-3">
-              {value || <span className="text-[#5c5850] italic">None reported</span>}
+              {value || <span className="text-[#7a7468] italic">None reported</span>}
             </p>
           </div>
         ))}
@@ -263,12 +263,12 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
 
       {/* AI report sections */}
       <div className="flex items-center gap-3 mb-4 animate-in" style={{ animationDelay: '160ms' }}>
-        <div className="h-px flex-1 bg-gradient-to-r from-[#c8a86a]/30 to-transparent" />
+        <div className="h-px flex-1 bg-gradient-to-r from-[#d4b070]/30 to-transparent" />
         <div className="flex items-center gap-2">
-          <FileText size={10} className="text-[#c8a86a]" />
-          <span className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.25em' }}>AI-GENERATED OWNER REPORT</span>
+          <FileText size={10} className="text-[#d4b070]" />
+          <span className="text-[10px] text-[#7a7468]" style={{ letterSpacing: '0.25em' }}>AI-GENERATED OWNER REPORT</span>
         </div>
-        <div className="h-px flex-1 bg-gradient-to-l from-[#c8a86a]/30 to-transparent" />
+        <div className="h-px flex-1 bg-gradient-to-l from-[#d4b070]/30 to-transparent" />
       </div>
 
       <div className="animate-in" style={{ animationDelay: '200ms' }}>

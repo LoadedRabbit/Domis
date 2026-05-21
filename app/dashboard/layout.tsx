@@ -10,8 +10,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Logo */}
         <div className="h-16 flex items-center px-5 border-b border-[#222620]">
           <Link href="/dashboard" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-sm border border-[#c8a86a]/30 bg-[#c8a86a]/06 flex items-center justify-center flex-shrink-0 group-hover:border-[#c8a86a]/50 group-hover:bg-[#c8a86a]/10 transition-all">
-              <span className="font-display text-xl font-semibold text-[#c8a86a] leading-none">K</span>
+            <div className="w-9 h-9 rounded-sm border border-[#d4b070]/30 bg-[#d4b070]/06 flex items-center justify-center flex-shrink-0 group-hover:border-[#d4b070]/50 group-hover:bg-[#d4b070]/10 transition-all">
+              <span className="font-display text-xl font-semibold text-[#d4b070] leading-none">K</span>
             </div>
             <div>
               <div
@@ -20,7 +20,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               >
                 KINYU
               </div>
-              <div className="text-[8px] text-[#5c5850] mt-1 leading-none" style={{ letterSpacing: '0.3em' }}>
+              <div className="text-[10px] text-[#7a7468] mt-1 leading-none" style={{ letterSpacing: '0.3em' }}>
                 REALTY
               </div>
             </div>
@@ -34,7 +34,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-1.5 h-1.5 rounded-full bg-[#5bba7a] status-pulse" />
-              <span className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.22em' }}>ONLINE</span>
+              <span className="text-[10px] text-[#7a7468]" style={{ letterSpacing: '0.22em' }}>ONLINE</span>
             </div>
             <UserButton appearance={{ elements: { avatarBox: 'w-6 h-6' } }} />
           </div>

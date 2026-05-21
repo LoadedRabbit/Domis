@@ -40,7 +40,7 @@ export default function ReportsPage() {
 
   const summaryStats = [
     { label: 'Reports',    value: loading ? '—' : String(filtered.length), color: '#eae6d6' },
-    { label: 'Rent',       value: loading ? '—' : formatCurrency(totalRent), color: '#c8a86a' },
+    { label: 'Rent',       value: loading ? '—' : formatCurrency(totalRent), color: '#d4b070' },
     { label: 'Expenses',   value: loading ? '—' : formatCurrency(totalExpenses), color: '#d48f4a' },
     { label: 'Net Income', value: loading ? '—' : formatCurrency(totalNOI), color: totalNOI >= 0 ? '#5bba7a' : '#c45c5c' },
   ]
@@ -52,21 +52,21 @@ export default function ReportsPage() {
         <div>
           <div className="flex items-center gap-2.5 mb-3">
             <div className="w-1.5 h-1.5 rounded-full bg-[#5bba7a] status-pulse" />
-            <span className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.28em' }}>ARCHIVE</span>
+            <span className="text-[10px] text-[#7a7468]" style={{ letterSpacing: '0.28em' }}>ARCHIVE</span>
           </div>
           <h1 className="font-display text-5xl font-light text-[#eae6d6] leading-tight tracking-tight mb-1">
             Reports
           </h1>
           <div className="flex items-center gap-3 mt-2">
-            <div className="h-px flex-1 bg-gradient-to-r from-[#c8a86a]/40 to-transparent max-w-36" />
-            <p className="text-xs text-[#5c5850]" style={{ letterSpacing: '0.15em' }}>
+            <div className="h-px flex-1 bg-gradient-to-r from-[#d4b070]/40 to-transparent max-w-36" />
+            <p className="text-xs text-[#7a7468]" style={{ letterSpacing: '0.15em' }}>
               COMPLETE HISTORY
             </p>
           </div>
         </div>
         <Link
           href="/dashboard"
-          className="flex items-center gap-1.5 text-[9px] text-[#c8a86a] hover:text-[#eae6d6] transition-colors border border-[#c8a86a]/25 hover:border-[#c8a86a]/50 rounded-sm px-3 py-2"
+          className="flex items-center gap-1.5 text-[11px] text-[#d4b070] hover:text-[#eae6d6] transition-colors border border-[#d4b070]/25 hover:border-[#d4b070]/50 rounded-sm px-3 py-2"
           style={{ letterSpacing: '0.12em', marginTop: '4px' }}
         >
           <Plus size={10} />
@@ -79,7 +79,7 @@ export default function ReportsPage() {
           <AlertCircle size={14} className="text-[#c45c5c] flex-shrink-0 mt-0.5" />
           <div>
             <p className="text-xs text-[#c45c5c]">{error}</p>
-            <p className="text-[11px] text-[#5c5850] mt-0.5">Check Supabase environment variables in Vercel.</p>
+            <p className="text-[11px] text-[#7a7468] mt-0.5">Check Supabase environment variables in Vercel.</p>
           </div>
         </div>
       )}
@@ -88,7 +88,7 @@ export default function ReportsPage() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8 animate-in" style={{ animationDelay: '80ms' }}>
         {summaryStats.map(({ label, value, color }) => (
           <div key={label} className="bg-[#101210] border border-[#222620] rounded-sm p-4">
-            <div className="text-[8px] text-[#5c5850] mb-3" style={{ letterSpacing: '0.2em' }}>{label.toUpperCase()}</div>
+            <div className="text-[10px] text-[#7a7468] mb-3" style={{ letterSpacing: '0.2em' }}>{label.toUpperCase()}</div>
             <div className="font-display text-2xl font-light leading-none" style={{ color }}>{value}</div>
           </div>
         ))}
@@ -96,13 +96,13 @@ export default function ReportsPage() {
 
       {/* Search */}
       <div className="relative mb-5 animate-in" style={{ animationDelay: '140ms' }}>
-        <Search size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#5c5850]" />
+        <Search size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#7a7468]" />
         <input
           type="text"
           placeholder="Search by building or period…"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full bg-[#101210] border border-[#222620] rounded-sm pl-10 pr-4 py-2.5 text-xs text-[#eae6d6] placeholder-[#5c5850] focus:outline-none focus:border-[#c8a86a]/30 focus:ring-1 focus:ring-[#c8a86a]/10 transition-all"
+          className="w-full bg-[#101210] border border-[#222620] rounded-sm pl-10 pr-4 py-2.5 text-xs text-[#eae6d6] placeholder-[#7a7468] focus:outline-none focus:border-[#d4b070]/30 focus:ring-1 focus:ring-[#d4b070]/10 transition-all"
           style={{ letterSpacing: '0.04em' }}
         />
       </div>
@@ -119,7 +119,7 @@ export default function ReportsPage() {
             { label: 'NOI',       cls: 'col-span-1 text-right' },
             { label: '',          cls: 'col-span-1' },
           ].map(({ label, cls }) => (
-            <div key={label} className={`text-[8px] text-[#5c5850] ${cls}`} style={{ letterSpacing: '0.2em' }}>
+            <div key={label} className={`text-[10px] text-[#7a7468] ${cls}`} style={{ letterSpacing: '0.2em' }}>
               {label}
             </div>
           ))}
@@ -140,7 +140,7 @@ export default function ReportsPage() {
             {!search && (
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-1.5 text-[9px] text-[#c8a86a] hover:text-[#eae6d6] transition-colors mt-4"
+                className="inline-flex items-center gap-1.5 text-[11px] text-[#d4b070] hover:text-[#eae6d6] transition-colors mt-4"
                 style={{ letterSpacing: '0.12em' }}
               >
                 <Plus size={10} />
@@ -157,12 +157,12 @@ export default function ReportsPage() {
                 className="grid grid-cols-12 gap-4 px-5 py-4 hover:bg-[#161914] transition-colors group items-center"
               >
                 <div className="col-span-4 flex items-center gap-3 min-w-0">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#222620] group-hover:bg-[#c8a86a] flex-shrink-0 transition-colors" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#222620] group-hover:bg-[#d4b070] flex-shrink-0 transition-colors" />
                   <div className="min-w-0">
                     <div className="font-display text-base italic font-medium text-[#c8c4b4] group-hover:text-[#eae6d6] transition-colors leading-tight truncate">
                       {report.building_name}
                     </div>
-                    <div className="text-[10px] text-[#5c5850] leading-tight truncate mt-0.5">
+                    <div className="text-[10px] text-[#7a7468] leading-tight truncate mt-0.5">
                       {report.building_address}
                     </div>
                   </div>
@@ -191,7 +191,7 @@ export default function ReportsPage() {
                 </div>
 
                 <div className="col-span-1 flex justify-end">
-                  <ChevronRight size={13} className="text-[#222620] group-hover:text-[#c8a86a] transition-colors" />
+                  <ChevronRight size={13} className="text-[#222620] group-hover:text-[#d4b070] transition-colors" />
                 </div>
               </Link>
             ))}

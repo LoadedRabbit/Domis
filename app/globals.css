@@ -9,8 +9,8 @@
   --color-border-hi:    #2e3328;
   --color-text-primary: #eae6d6;
   --color-text-secondary: #9e9a8c;
-  --color-text-muted:   #5c5850;
-  --color-gold:         #c8a86a;
+  --color-text-muted:   #7a7468;
+  --color-gold:         #d4b070;
   --color-gold-dim:     #3a3018;
   --color-green:        #5bba7a;
   --color-green-dim:    #0d2e1a;
@@ -41,7 +41,7 @@ body {
 /* ── Backgrounds ─────────────────────────────────────────────────────────── */
 
 .dot-grid {
-  background-image: radial-gradient(circle, rgba(200,168,106,0.06) 1px, transparent 1px);
+  background-image: radial-gradient(circle, rgba(212,176,112,0.06) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
@@ -65,10 +65,10 @@ body {
 /* ── Glow ────────────────────────────────────────────────────────────────── */
 
 .glow-gold {
-  box-shadow: 0 0 28px rgba(200,168,106,0.18), 0 0 60px rgba(200,168,106,0.06);
+  box-shadow: 0 0 28px rgba(212,176,112,0.18), 0 0 60px rgba(212,176,112,0.06);
 }
 .glow-gold-text {
-  text-shadow: 0 0 32px rgba(200,168,106,0.35);
+  text-shadow: 0 0 32px rgba(212,176,112,0.35);
 }
 
 /* ── Animations ──────────────────────────────────────────────────────────── */
@@ -113,7 +113,7 @@ body {
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: #101210; }
 ::-webkit-scrollbar-thumb { background: #2e3328; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #c8a86a; }
+::-webkit-scrollbar-thumb:hover { background: #d4b070; }
 
 /* ── Report content ──────────────────────────────────────────────────────── */
 
@@ -122,7 +122,7 @@ body {
   font-size: 20px;
   font-weight: 500;
   font-style: italic;
-  color: #c8a86a;
+  color: #d4b070;
   margin-top: 32px;
   margin-bottom: 14px;
   padding-bottom: 8px;
@@ -148,6 +148,6 @@ body {
   content: '—';
   position: absolute;
   left: 0;
-  color: #c8a86a;
+  color: #d4b070;
 }
 .report-content strong { color: #eae6d6; font-weight: 600; }

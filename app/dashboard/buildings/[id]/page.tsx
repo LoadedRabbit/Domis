@@ -18,7 +18,7 @@ const STATUS_COLORS: Record<string, string> = {
   Paid:        '#5bba7a',
   Outstanding: '#c45c5c',
   Partial:     '#d48f4a',
-  Vacant:      '#5c5850',
+  Vacant:      '#7a7468',
 }
 
 const BLANK_ENTRY: RentRollEntry = { unit: '', tenant: '', rent: '', status: 'Paid', notes: '' }
@@ -118,19 +118,19 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
     }))
   }
 
-  const inputClass = 'w-full bg-[#0e100d] border border-[#222620] rounded-sm text-xs text-[#eae6d6] placeholder-[#5c5850] px-3 py-2.5 focus:outline-none focus:border-[#c8a86a]/30 focus:ring-1 focus:ring-[#c8a86a]/10 transition-all'
+  const inputClass = 'w-full bg-[#0e100d] border border-[#222620] rounded-sm text-xs text-[#eae6d6] placeholder-[#7a7468] px-3 py-2.5 focus:outline-none focus:border-[#d4b070]/30 focus:ring-1 focus:ring-[#d4b070]/10 transition-all'
   const textareaClass = `${inputClass} resize-none`
 
   if (loading) {
     return (
       <div className="p-8 flex items-center justify-center h-64">
-        <Loader2 size={18} className="animate-spin text-[#5c5850]" />
+        <Loader2 size={18} className="animate-spin text-[#7a7468]" />
       </div>
     )
   }
 
   if (!building) {
-    return <div className="p-8 text-[#5c5850] text-sm">Building not found.</div>
+    return <div className="p-8 text-[#7a7468] text-sm">Building not found.</div>
   }
 
   const netPreview = form.total_rent_collected && form.total_expenses
@@ -153,15 +153,15 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
     { collected: 0, outstanding: 0, paidCount: 0, outstandingCount: 0, partialCount: 0, vacantCount: 0 }
   )
 
-  const labelClass = 'block text-[8px] text-[#5c5850] mb-1.5'
+  const labelClass = 'block text-[10px] text-[#7a7468] mb-1.5'
   const sectionClass = 'bg-[#0e100d] border border-[#222620] rounded-sm p-4 space-y-3'
-  const sectionLabelClass = 'text-[8px] text-[#5c5850]'
+  const sectionLabelClass = 'text-[10px] text-[#7a7468]'
 
   return (
     <div className="p-8 max-w-4xl mx-auto">
       {/* Breadcrumb */}
       <div
-        className="flex items-center gap-2 text-[10px] text-[#5c5850] mb-8 animate-in"
+        className="flex items-center gap-2 text-[10px] text-[#7a7468] mb-8 animate-in"
         style={{ letterSpacing: '0.1em', animationDelay: '0ms' }}
       >
         <Link href="/dashboard" className="hover:text-[#eae6d6] transition-colors">OPERATIONS</Link>
@@ -173,19 +173,19 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
       <div className="flex items-start justify-between mb-8 animate-in" style={{ animationDelay: '60ms' }}>
         <div className="flex items-start gap-5">
           <div className="w-14 h-14 rounded-sm bg-[#101210] border border-[#222620] flex items-center justify-center flex-shrink-0">
-            <Building2 size={20} className="text-[#c8a86a]" style={{ opacity: 0.6 }} />
+            <Building2 size={20} className="text-[#d4b070]" style={{ opacity: 0.6 }} />
           </div>
           <div>
             <h1 className="font-display text-4xl font-light italic text-[#eae6d6] leading-tight">{building.name}</h1>
             <p className="text-sm text-[#9e9a8c] mt-1">{building.address}</p>
-            <p className="text-[9px] text-[#5c5850] mt-1" style={{ letterSpacing: '0.15em' }}>
+            <p className="text-[11px] text-[#7a7468] mt-1" style={{ letterSpacing: '0.15em' }}>
               {building.total_units} UNITS REGISTERED
             </p>
           </div>
         </div>
         <Link
           href="/dashboard"
-          className="flex items-center gap-1.5 text-[9px] text-[#9e9a8c] hover:text-[#eae6d6] transition-colors border border-[#222620] rounded-sm px-3 py-2 hover:border-[#2e3328]"
+          className="flex items-center gap-1.5 text-[11px] text-[#9e9a8c] hover:text-[#eae6d6] transition-colors border border-[#222620] rounded-sm px-3 py-2 hover:border-[#2e3328]"
           style={{ letterSpacing: '0.1em' }}
         >
           <ArrowLeft size={11} />
@@ -198,8 +198,8 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
         <div className="lg:col-span-2 animate-in" style={{ animationDelay: '120ms' }}>
           <div className="bg-[#101210] border border-[#222620] rounded-sm p-6">
             <div className="flex items-center gap-2.5 mb-6 pb-4 border-b border-[#222620]">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#c8a86a] status-pulse" />
-              <span className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.22em' }}>
+              <div className="w-1.5 h-1.5 rounded-full bg-[#d4b070] status-pulse" />
+              <span className="text-[10px] text-[#7a7468]" style={{ letterSpacing: '0.22em' }}>
                 GENERATE OWNER REPORT
               </span>
             </div>
@@ -208,7 +208,7 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
               {/* Report period */}
               <div>
                 <p className={sectionLabelClass} style={{ letterSpacing: '0.2em' }}>
-                  REPORT PERIOD <span className="text-[#c8a86a]">*</span>
+                  REPORT PERIOD <span className="text-[#d4b070]">*</span>
                 </p>
                 <div className="grid grid-cols-2 gap-3 mt-2">
                   <div>
@@ -243,7 +243,7 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
                   <button
                     type="button"
                     onClick={() => setForm(f => ({ ...f, rent_roll: [...f.rent_roll, { ...BLANK_ENTRY }] }))}
-                    className="flex items-center gap-1 text-[9px] text-[#c8a86a] hover:text-[#eae6d6] transition-colors"
+                    className="flex items-center gap-1 text-[11px] text-[#d4b070] hover:text-[#eae6d6] transition-colors"
                     style={{ letterSpacing: '0.1em' }}
                   >
                     <Plus size={9} />
@@ -252,14 +252,14 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
                 </div>
 
                 {form.rent_roll.length === 0 ? (
-                  <p className="text-xs text-[#5c5850] text-center py-3 italic font-display">
+                  <p className="text-xs text-[#7a7468] text-center py-3 italic font-display">
                     No units added. Click &quot;Add Unit&quot; to build the rent roll.
                   </p>
                 ) : (
                   <>
                     <div className="grid grid-cols-12 gap-1.5 px-0.5">
                       {[['Unit','col-span-2'],['Tenant','col-span-3'],['Rent','col-span-2'],['Status','col-span-2'],['Notes','col-span-2'],['','col-span-1']].map(([h, c]) => (
-                        <span key={h} className={`text-[8px] text-[#5c5850] ${c}`} style={{ letterSpacing: '0.18em' }}>{h}</span>
+                        <span key={h} className={`text-[10px] text-[#7a7468] ${c}`} style={{ letterSpacing: '0.18em' }}>{h}</span>
                       ))}
                     </div>
 
@@ -272,7 +272,7 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
                           onChange={e => updateRentRollEntry(idx, 'tenant', e.target.value)}
                           className={`col-span-3 ${inputClass} py-2`} />
                         <div className="col-span-2 relative">
-                          <DollarSign size={9} className="absolute left-2 top-1/2 -translate-y-1/2 text-[#5c5850]" />
+                          <DollarSign size={9} className="absolute left-2 top-1/2 -translate-y-1/2 text-[#7a7468]" />
                           <input type="number" step="0.01" min="0" placeholder="0" value={entry.rent}
                             onChange={e => updateRentRollEntry(idx, 'rent', e.target.value)}
                             className={`${inputClass} py-2 pl-5`} />
@@ -292,26 +292,26 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
                           className={`col-span-2 ${inputClass} py-2`} />
                         <button type="button"
                           onClick={() => setForm(f => ({ ...f, rent_roll: f.rent_roll.filter((_, i) => i !== idx) }))}
-                          className="col-span-1 flex items-center justify-center text-[#5c5850] hover:text-[#c45c5c] transition-colors h-8">
+                          className="col-span-1 flex items-center justify-center text-[#7a7468] hover:text-[#c45c5c] transition-colors h-8">
                           <X size={11} />
                         </button>
                       </div>
                     ))}
 
                     <div className="flex items-center justify-between bg-[#0b0c09] border border-[#222620] rounded-sm px-3 py-2.5 mt-1">
-                      <div className="flex items-center gap-3 text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.15em' }}>
+                      <div className="flex items-center gap-3 text-[10px] text-[#7a7468]" style={{ letterSpacing: '0.15em' }}>
                         <span>{form.rent_roll.length} UNITS</span>
                         {rentRollTotals.vacantCount > 0 && <span>{rentRollTotals.vacantCount} VACANT</span>}
                         {rentRollTotals.partialCount > 0 && <span className="text-[#d48f4a]">{rentRollTotals.partialCount} PARTIAL</span>}
                       </div>
                       <div className="flex items-center gap-4">
                         <div className="text-right">
-                          <div className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.15em' }}>COLLECTED</div>
+                          <div className="text-[10px] text-[#7a7468]" style={{ letterSpacing: '0.15em' }}>COLLECTED</div>
                           <div className="font-display text-base font-light text-[#5bba7a]">{formatCurrency(rentRollTotals.collected)}</div>
                         </div>
                         {rentRollTotals.outstanding > 0 && (
                           <div className="text-right">
-                            <div className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.15em' }}>OUTSTANDING</div>
+                            <div className="text-[10px] text-[#7a7468]" style={{ letterSpacing: '0.15em' }}>OUTSTANDING</div>
                             <div className="font-display text-base font-light text-[#c45c5c]">{formatCurrency(rentRollTotals.outstanding)}</div>
                           </div>
                         )}
@@ -324,13 +324,13 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
               {/* Financial data */}
               <div className={sectionClass}>
                 <p className={sectionLabelClass} style={{ letterSpacing: '0.2em' }}>
-                  FINANCIAL DATA <span className="text-[#c8a86a]">*</span>
+                  FINANCIAL DATA <span className="text-[#d4b070]">*</span>
                 </p>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className={labelClass} style={{ letterSpacing: '0.15em' }}>RENT COLLECTED</label>
                     <div className="relative">
-                      <DollarSign size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5850]" />
+                      <DollarSign size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7468]" />
                       <input type="number" step="0.01" min="0" placeholder="0.00"
                         value={form.total_rent_collected}
                         onChange={e => setForm(f => ({ ...f, total_rent_collected: e.target.value }))}
@@ -340,7 +340,7 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
                   <div>
                     <label className={labelClass} style={{ letterSpacing: '0.15em' }}>TOTAL EXPENSES</label>
                     <div className="relative">
-                      <DollarSign size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5850]" />
+                      <DollarSign size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7468]" />
                       <input type="number" step="0.01" min="0" placeholder="0.00"
                         value={form.total_expenses}
                         onChange={e => setForm(f => ({ ...f, total_expenses: e.target.value }))}
@@ -351,7 +351,7 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
 
                 {netPreview !== null && (
                   <div className="flex items-center justify-between bg-[#0b0c09] border border-[#222620] rounded-sm p-3">
-                    <span className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.2em' }}>NET OPERATING INCOME</span>
+                    <span className="text-[10px] text-[#7a7468]" style={{ letterSpacing: '0.2em' }}>NET OPERATING INCOME</span>
                     <div className="text-right">
                       <div className="font-display text-2xl font-light leading-none" style={{ color: netPreview >= 0 ? '#5bba7a' : '#c45c5c' }}>
                         {formatCurrency(netPreview)}
@@ -368,7 +368,7 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
                   <div>
                     <label className={labelClass} style={{ letterSpacing: '0.15em' }}>LATE PAYMENTS</label>
                     <div className="relative">
-                      <DollarSign size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5850]" />
+                      <DollarSign size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7468]" />
                       <input type="number" step="0.01" min="0" placeholder="0.00"
                         value={form.late_payments}
                         onChange={e => setForm(f => ({ ...f, late_payments: e.target.value }))}
@@ -378,7 +378,7 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
                   <div>
                     <label className={labelClass} style={{ letterSpacing: '0.15em' }}>MANAGEMENT FEE</label>
                     <div className="relative">
-                      <DollarSign size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5850]" />
+                      <DollarSign size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7468]" />
                       <input type="number" step="0.01" min="0" placeholder="0.00"
                         value={form.management_fee}
                         onChange={e => setForm(f => ({ ...f, management_fee: e.target.value }))}
@@ -391,10 +391,10 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
               {/* Occupancy */}
               <div>
                 <label className={labelClass} style={{ letterSpacing: '0.15em' }}>
-                  VACANT UNITS <span className="text-[#c8a86a]">*</span>
+                  VACANT UNITS <span className="text-[#d4b070]">*</span>
                 </label>
                 <div className="relative">
-                  <Home size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5850]" />
+                  <Home size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7468]" />
                   <input type="number" min="0" max={building.total_units} placeholder="0"
                     value={form.vacant_units}
                     onChange={e => setForm(f => ({ ...f, vacant_units: e.target.value }))}
@@ -405,10 +405,10 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
                     <div className="flex-1 h-px bg-[#222620] rounded-full overflow-hidden relative">
                       <div
                         className="absolute left-0 top-0 h-full rounded-full transition-all"
-                        style={{ width: `${occupancyPreview}%`, background: '#c8a86a' }}
+                        style={{ width: `${occupancyPreview}%`, background: '#d4b070' }}
                       />
                     </div>
-                    <span className="text-[9px] text-[#c8a86a]" style={{ letterSpacing: '0.1em' }}>
+                    <span className="text-[11px] text-[#d4b070]" style={{ letterSpacing: '0.1em' }}>
                       {occupancyPreview}% OCCUPIED
                     </span>
                   </div>
@@ -422,7 +422,7 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
                   <div>
                     <label className={labelClass} style={{ letterSpacing: '0.15em' }}>OUTSTANDING BALANCES</label>
                     <div className="relative">
-                      <DollarSign size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5850]" />
+                      <DollarSign size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7468]" />
                       <input type="number" step="0.01" min="0" placeholder="0.00"
                         value={form.outstanding_balances}
                         onChange={e => setForm(f => ({ ...f, outstanding_balances: e.target.value }))}
@@ -446,7 +446,7 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
                   <div>
                     <label className={labelClass} style={{ letterSpacing: '0.15em' }}>YTD RENT COLLECTED</label>
                     <div className="relative">
-                      <DollarSign size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5850]" />
+                      <DollarSign size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7468]" />
                       <input type="number" step="0.01" min="0" placeholder="0.00"
                         value={form.ytd_rent}
                         onChange={e => setForm(f => ({ ...f, ytd_rent: e.target.value }))}
@@ -456,7 +456,7 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
                   <div>
                     <label className={labelClass} style={{ letterSpacing: '0.15em' }}>YTD EXPENSES</label>
                     <div className="relative">
-                      <DollarSign size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5850]" />
+                      <DollarSign size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7468]" />
                       <input type="number" step="0.01" min="0" placeholder="0.00"
                         value={form.ytd_expenses}
                         onChange={e => setForm(f => ({ ...f, ytd_expenses: e.target.value }))}
@@ -466,7 +466,7 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
                 </div>
                 {form.ytd_rent && form.ytd_expenses && (
                   <div className="flex items-center justify-between bg-[#0b0c09] border border-[#222620] rounded-sm p-3">
-                    <span className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.2em' }}>YTD NET INCOME</span>
+                    <span className="text-[10px] text-[#7a7468]" style={{ letterSpacing: '0.2em' }}>YTD NET INCOME</span>
                     <div className="font-display text-2xl font-light leading-none" style={{
                       color: parseFloat(form.ytd_rent) - parseFloat(form.ytd_expenses) >= 0 ? '#5bba7a' : '#c45c5c'
                     }}>
@@ -507,7 +507,7 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
               {/* Next Month Outlook */}
               <div className={sectionClass}>
                 <div className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#c8a86a] opacity-60" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#d4b070] opacity-60" />
                   <p className={sectionLabelClass} style={{ letterSpacing: '0.2em' }}>NEXT MONTH OUTLOOK</p>
                 </div>
                 <textarea rows={4}
@@ -515,7 +515,7 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
                   value={form.next_month_outlook}
                   onChange={e => setForm(f => ({ ...f, next_month_outlook: e.target.value }))}
                   className={textareaClass} />
-                <p className="text-[9px] text-[#5c5850]">
+                <p className="text-[11px] text-[#7a7468]">
                   The AI will include a dedicated &quot;Looking Ahead&quot; section based on these inputs.
                 </p>
               </div>
@@ -530,7 +530,7 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
               <button
                 type="submit"
                 disabled={generating}
-                className="w-full flex items-center justify-center gap-2.5 bg-[#c8a86a]/10 hover:bg-[#c8a86a]/16 border border-[#c8a86a]/30 hover:border-[#c8a86a]/50 disabled:opacity-40 disabled:cursor-not-allowed text-[#c8a86a] text-[10px] py-4 rounded-sm transition-all"
+                className="w-full flex items-center justify-center gap-2.5 bg-[#d4b070]/10 hover:bg-[#d4b070]/16 border border-[#d4b070]/30 hover:border-[#d4b070]/50 disabled:opacity-40 disabled:cursor-not-allowed text-[#d4b070] text-[10px] py-4 rounded-sm transition-all"
                 style={{ letterSpacing: '0.2em' }}
               >
                 {generating ? (
@@ -547,7 +547,7 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
               </button>
 
               {generating && (
-                <p className="text-center text-[10px] text-[#5c5850]" style={{ letterSpacing: '0.1em' }}>
+                <p className="text-center text-[10px] text-[#7a7468]" style={{ letterSpacing: '0.1em' }}>
                   This takes 15–30 seconds. Sit tight.
                 </p>
               )}
@@ -558,14 +558,14 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
         {/* Past reports */}
         <div className="animate-in" style={{ animationDelay: '200ms' }}>
           <div className="flex items-center gap-2.5 mb-4">
-            <FileText size={11} className="text-[#5c5850]" />
-            <h3 className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.22em' }}>PAST REPORTS</h3>
+            <FileText size={11} className="text-[#7a7468]" />
+            <h3 className="text-[10px] text-[#7a7468]" style={{ letterSpacing: '0.22em' }}>PAST REPORTS</h3>
           </div>
 
           {buildingReports.length === 0 ? (
             <div className="bg-[#101210] border border-[#222620] rounded-sm p-6 text-center">
               <p className="font-display italic text-sm text-[#9e9a8c]">No reports yet</p>
-              <p className="text-[10px] text-[#5c5850] mt-1">Generate your first report</p>
+              <p className="text-[10px] text-[#7a7468] mt-1">Generate your first report</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -582,7 +582,7 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
                     <div className="font-display text-xl font-light leading-none" style={{ color: Number(r.net_income) >= 0 ? '#5bba7a' : '#c45c5c' }}>
                       {formatCurrency(Number(r.net_income))}
                     </div>
-                    <div className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.15em' }}>NOI</div>
+                    <div className="text-[10px] text-[#7a7468]" style={{ letterSpacing: '0.15em' }}>NOI</div>
                   </div>
                 </Link>
               ))}

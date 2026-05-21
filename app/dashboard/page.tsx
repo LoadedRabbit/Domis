@@ -54,7 +54,7 @@ export default function DashboardPage() {
   const totalUnits = buildings.reduce((sum, b) => sum + b.total_units, 0)
 
   const stats = [
-    { label: 'Properties',  value: buildings.length,     sub: 'buildings',    icon: Building2,  color: '#c8a86a' },
+    { label: 'Properties',  value: buildings.length,     sub: 'buildings',    icon: Building2,  color: '#d4b070' },
     { label: 'Total Units', value: totalUnits,            sub: 'residential',  icon: Users,      color: '#9e9a8c' },
     { label: 'Reports',     value: recentReports.length, sub: 'generated',    icon: FileText,   color: '#5bba7a' },
     { label: 'Staff',       value: 6,                    sub: 'active',       icon: TrendingUp, color: '#d48f4a' },
@@ -70,7 +70,7 @@ export default function DashboardPage() {
         <div className="flex items-center gap-2.5 mb-3">
           <div className="w-1.5 h-1.5 rounded-full bg-[#5bba7a] status-pulse" />
           <span
-            className="text-[8px] text-[#5c5850]"
+            className="text-[10px] text-[#7a7468]"
             style={{ letterSpacing: '0.28em' }}
           >
             OPERATIONAL
@@ -80,8 +80,8 @@ export default function DashboardPage() {
           Operations
         </h1>
         <div className="flex items-center gap-3 mt-2">
-          <div className="h-px flex-1 bg-gradient-to-r from-[#c8a86a]/40 to-transparent max-w-48" />
-          <p className="text-xs text-[#5c5850]" style={{ letterSpacing: '0.15em' }}>
+          <div className="h-px flex-1 bg-gradient-to-r from-[#d4b070]/40 to-transparent max-w-48" />
+          <p className="text-xs text-[#7a7468]" style={{ letterSpacing: '0.15em' }}>
             KINYU REALTY AND MANAGEMENT CORP
           </p>
         </div>
@@ -95,7 +95,7 @@ export default function DashboardPage() {
           <AlertCircle size={14} className="text-[#c45c5c] flex-shrink-0 mt-0.5" />
           <div>
             <p className="text-xs text-[#c45c5c]">{error}</p>
-            <p className="text-[11px] text-[#5c5850] mt-0.5">Check Supabase environment variables in Vercel.</p>
+            <p className="text-[11px] text-[#7a7468] mt-0.5">Check Supabase environment variables in Vercel.</p>
           </div>
         </div>
       )}
@@ -110,7 +110,7 @@ export default function DashboardPage() {
           >
             <div className="flex items-center justify-between mb-3">
               <span
-                className="text-[8px] text-[#5c5850]"
+                className="text-[10px] text-[#7a7468]"
                 style={{ letterSpacing: '0.2em' }}
               >
                 {label.toUpperCase()}
@@ -123,7 +123,7 @@ export default function DashboardPage() {
             >
               {loading ? <span style={{ color: '#222620' }}>—</span> : value}
             </div>
-            <div className="text-[9px] text-[#5c5850]" style={{ letterSpacing: '0.15em' }}>
+            <div className="text-[11px] text-[#7a7468]" style={{ letterSpacing: '0.15em' }}>
               {sub}
             </div>
           </div>
@@ -136,14 +136,14 @@ export default function DashboardPage() {
         <div className="lg:col-span-2 animate-in" style={{ animationDelay: '320ms' }}>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2.5">
-              <Building2 size={12} className="text-[#5c5850]" />
-              <span className="text-[9px] text-[#5c5850]" style={{ letterSpacing: '0.22em' }}>
+              <Building2 size={12} className="text-[#7a7468]" />
+              <span className="text-[11px] text-[#7a7468]" style={{ letterSpacing: '0.22em' }}>
                 PROPERTIES
               </span>
             </div>
             {!loading && (
               <span
-                className="text-[9px] text-[#c8a86a]"
+                className="text-[11px] text-[#d4b070]"
                 style={{ letterSpacing: '0.15em' }}
               >
                 {buildings.length} listed
@@ -176,7 +176,7 @@ export default function DashboardPage() {
                       <div className="font-display text-base font-medium italic text-[#c8c4b4] group-hover:text-[#eae6d6] leading-tight truncate transition-colors">
                         {building.name}
                       </div>
-                      <div className="text-[10px] text-[#5c5850] truncate mt-0.5">
+                      <div className="text-[10px] text-[#7a7468] truncate mt-0.5">
                         {building.address}
                       </div>
                     </div>
@@ -184,13 +184,13 @@ export default function DashboardPage() {
                   <div className="flex items-center gap-4 flex-shrink-0 ml-4">
                     <div className="text-right hidden sm:block">
                       <div className="font-display text-xl font-light text-[#9e9a8c]">{building.total_units}</div>
-                      <div className="text-[8px] text-[#5c5850]" style={{ letterSpacing: '0.15em' }}>UNITS</div>
+                      <div className="text-[10px] text-[#7a7468]" style={{ letterSpacing: '0.15em' }}>UNITS</div>
                     </div>
-                    <div className="flex items-center gap-1.5 border border-[#c8a86a]/0 group-hover:border-[#c8a86a]/20 bg-[#c8a86a]/0 group-hover:bg-[#c8a86a]/04 rounded-sm px-2.5 py-1 opacity-0 group-hover:opacity-100 transition-all">
-                      <Plus size={9} className="text-[#c8a86a]" />
-                      <span className="text-[9px] text-[#c8a86a]" style={{ letterSpacing: '0.1em' }}>REPORT</span>
+                    <div className="flex items-center gap-1.5 border border-[#d4b070]/0 group-hover:border-[#d4b070]/20 bg-[#d4b070]/0 group-hover:bg-[#d4b070]/04 rounded-sm px-2.5 py-1 opacity-0 group-hover:opacity-100 transition-all">
+                      <Plus size={9} className="text-[#d4b070]" />
+                      <span className="text-[11px] text-[#d4b070]" style={{ letterSpacing: '0.1em' }}>REPORT</span>
                     </div>
-                    <ChevronRight size={13} className="text-[#2e3328] group-hover:text-[#c8a86a] transition-colors" />
+                    <ChevronRight size={13} className="text-[#2e3328] group-hover:text-[#d4b070] transition-colors" />
                   </div>
                 </Link>
               ))}
@@ -202,14 +202,14 @@ export default function DashboardPage() {
         <div className="animate-in" style={{ animationDelay: '380ms' }}>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2.5">
-              <FileText size={12} className="text-[#5c5850]" />
-              <span className="text-[9px] text-[#5c5850]" style={{ letterSpacing: '0.22em' }}>
+              <FileText size={12} className="text-[#7a7468]" />
+              <span className="text-[11px] text-[#7a7468]" style={{ letterSpacing: '0.22em' }}>
                 RECENT REPORTS
               </span>
             </div>
             <Link
               href="/dashboard/reports"
-              className="text-[9px] text-[#c8a86a] hover:text-[#eae6d6] transition-colors"
+              className="text-[11px] text-[#d4b070] hover:text-[#eae6d6] transition-colors"
               style={{ letterSpacing: '0.1em' }}
             >
               VIEW ALL →
@@ -225,10 +225,10 @@ export default function DashboardPage() {
           ) : recentReports.length === 0 ? (
             <div className="bg-[#101210] border border-[#222620] rounded-sm p-8 text-center">
               <div className="w-10 h-10 rounded-sm bg-[#161914] border border-[#222620] flex items-center justify-center mx-auto mb-3">
-                <Clock size={14} className="text-[#5c5850]" />
+                <Clock size={14} className="text-[#7a7468]" />
               </div>
               <p className="text-xs text-[#9e9a8c]">No reports yet</p>
-              <p className="text-[10px] text-[#5c5850] mt-1">Select a building to begin</p>
+              <p className="text-[10px] text-[#7a7468] mt-1">Select a building to begin</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -244,7 +244,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="w-1.5 h-1.5 rounded-full bg-[#5bba7a] flex-shrink-0 mt-1 status-pulse" />
                   </div>
-                  <div className="text-[9px] text-[#5c5850] mb-3" style={{ letterSpacing: '0.12em' }}>
+                  <div className="text-[11px] text-[#7a7468] mb-3" style={{ letterSpacing: '0.12em' }}>
                     {formatMonth(report.report_month, report.report_year).toUpperCase()}
                   </div>
                   <div className="flex items-end justify-between">
@@ -255,11 +255,11 @@ export default function DashboardPage() {
                       >
                         {formatCurrency(Number(report.net_income))}
                       </div>
-                      <div className="text-[8px] text-[#5c5850] mt-0.5" style={{ letterSpacing: '0.15em' }}>
+                      <div className="text-[10px] text-[#7a7468] mt-0.5" style={{ letterSpacing: '0.15em' }}>
                         NET INCOME
                       </div>
                     </div>
-                    <ChevronRight size={12} className="text-[#2e3328] group-hover:text-[#c8a86a] transition-colors mb-1" />
+                    <ChevronRight size={12} className="text-[#2e3328] group-hover:text-[#d4b070] transition-colors mb-1" />
                   </div>
                 </Link>
               ))}
