@@ -2,15 +2,16 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, FileText, Users, MessageSquare, Wrench, DollarSign } from 'lucide-react'
+import { LayoutDashboard, FileText, Users, MessageSquare, Wrench, DollarSign, TrendingUp } from 'lucide-react'
 
 const navItems = [
-  { href: '/dashboard',                  label: 'Operations',    icon: LayoutDashboard, exact: true  },
+  { href: '/dashboard',                  label: 'Overview',      icon: LayoutDashboard, exact: true  },
   { href: '/dashboard/reports',          label: 'Reports',       icon: FileText,        exact: false },
   { href: '/dashboard/tenants',          label: 'Tenants',       icon: Users,           exact: false },
-  { href: '/dashboard/communications',   label: 'Comms',         icon: MessageSquare,   exact: false },
+  { href: '/dashboard/communications',   label: 'Messages',      icon: MessageSquare,   exact: false },
   { href: '/dashboard/maintenance',      label: 'Maintenance',   icon: Wrench,          exact: false },
   { href: '/dashboard/rent',             label: 'Rent',          icon: DollarSign,      exact: false },
+  { href: '/dashboard/finances',         label: 'Finances',      icon: TrendingUp,      exact: false },
 ]
 
 export function NavLinks() {

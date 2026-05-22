@@ -56,7 +56,7 @@ export default function CommunicationsPage() {
     const res = await fetch(`/api/communications/${threadId}/messages`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ body, sender_role: 'manager', sender_name: 'Property Manager' }),
+      body: JSON.stringify({ body, sender_role: 'manager', sender_name: 'Landlord' }),
     })
     if (res.ok) {
       const msg: CommunicationMessage = await res.json()

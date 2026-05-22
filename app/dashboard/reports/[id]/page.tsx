@@ -175,7 +175,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
     <div className="p-8 max-w-4xl mx-auto">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-[10px] text-[#7a7468] mb-8 animate-in" style={{ letterSpacing: '0.1em', animationDelay: '0ms' }}>
-        <Link href="/dashboard" className="hover:text-[#eae6d6] transition-colors">OPERATIONS</Link>
+        <Link href="/dashboard" className="hover:text-[#eae6d6] transition-colors">OVERVIEW</Link>
         <ChevronRight size={10} />
         <Link href="/dashboard/reports" className="hover:text-[#eae6d6] transition-colors">REPORTS</Link>
         <ChevronRight size={10} />

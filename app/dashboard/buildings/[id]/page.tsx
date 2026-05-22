@@ -130,7 +130,7 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
   }
 
   if (!building) {
-    return <div className="p-8 text-[#7a7468] text-sm">Building not found.</div>
+    return <div className="p-8 text-[#7a7468] text-sm">Property not found.</div>
   }
 
   const netPreview = form.total_rent_collected && form.total_expenses
@@ -164,7 +164,7 @@ export default function BuildingPage({ params }: { params: Promise<{ id: string 
         className="flex items-center gap-2 text-[10px] text-[#7a7468] mb-8 animate-in"
         style={{ letterSpacing: '0.1em', animationDelay: '0ms' }}
       >
-        <Link href="/dashboard" className="hover:text-[#eae6d6] transition-colors">OPERATIONS</Link>
+        <Link href="/dashboard" className="hover:text-[#eae6d6] transition-colors">OVERVIEW</Link>
         <ChevronRight size={10} />
         <span className="font-display italic text-sm text-[#9e9a8c]">{building.name}</span>
       </div>

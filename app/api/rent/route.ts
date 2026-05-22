@@ -20,8 +20,9 @@ export async function GET(req: NextRequest) {
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const { searchParams } = new URL(req.url)
-    const buildingId = searchParams.get('building_id')
-    const status     = searchParams.get('status')
+    const buildingId    = searchParams.get('building_id')
+    const status        = searchParams.get('status')
+    const dueWithinDays = searchParams.get('due_within_days')
 
     const supabase = createServerClient()
     let query = supabase
@@ -35,6 +36,16 @@ export async function GET(req: NextRequest) {
 
     if (buildingId) query = query.eq('building_id', buildingId)
     if (status)     query = query.eq('status', status)
+
+    if (dueWithinDays) {
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      const future = new Date(today)
+      future.setDate(future.getDate() + Number(dueWithinDays))
+      query = query
+        .gte('due_date', today.toISOString().split('T')[0])
+        .lte('due_date', future.toISOString().split('T')[0])
+    }
 
     const { data, error } = await query
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })

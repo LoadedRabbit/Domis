@@ -122,6 +122,68 @@ function buildReportHTML(report: {
 </div>`
 }
 
+function buildTaxReportHTML(reportText: string, year: number): string {
+  const sectionsHTML = reportText
+    .split(/^## /m)
+    .filter(Boolean)
+    .map(buildSectionHTML)
+    .join('')
+
+  const genDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+
+  return `<div style="font-family:Helvetica,Arial,sans-serif;color:#1a1a1a;background:#fff;width:516px;box-sizing:border-box;">
+
+  <div style="margin-bottom:20px;">
+    <div style="font-size:7.5px;letter-spacing:3px;color:#888;text-transform:uppercase;margin-bottom:9px;font-weight:700;">Landlord Tax Summary</div>
+    <div style="font-size:27px;font-weight:300;color:#111;margin-bottom:8px;line-height:1.1;">Schedule E Summary</div>
+    <div style="font-size:13px;color:#444;margin-bottom:4px;">Tax Year ${year}</div>
+  </div>
+
+  <div style="height:2.5px;background:#1a1a2e;margin-bottom:20px;"></div>
+
+  ${sectionsHTML}
+
+  <table style="width:100%;border-collapse:collapse;border-top:1px solid #ddd;margin-top:12px;">
+    <tr>
+      <td style="padding-top:8px;font-size:7.5px;color:#aaa;">For informational purposes only — consult your tax advisor</td>
+      <td style="padding-top:8px;font-size:7.5px;color:#aaa;text-align:right;">Generated ${genDate}</td>
+    </tr>
+  </table>
+
+</div>`
+}
+
+export async function downloadTaxReportPDF(reportText: string, year: number): Promise<void> {
+  const htmlContent = buildTaxReportHTML(reportText, year)
+
+  const container = document.createElement('div')
+  container.style.cssText = 'position:absolute;left:-10000px;top:0;'
+  container.innerHTML = htmlContent
+  document.body.appendChild(container)
+
+  const element = container.firstElementChild as HTMLElement
+
+  const MARGIN = 48
+  const CONTENT_W = 516
+
+  const doc = new jsPDF({ unit: 'pt', format: 'letter', orientation: 'portrait' })
+
+  try {
+    await doc.html(element, {
+      autoPaging: 'text',
+      html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false },
+      margin: [MARGIN, MARGIN, MARGIN, MARGIN],
+      width: CONTENT_W,
+      windowWidth: CONTENT_W,
+      x: 0,
+      y: 0,
+    })
+    doc.save(`schedule-e-${year}.pdf`)
+  } finally {
+    document.body.removeChild(container)
+  }
+}
+
 export async function downloadReportAsPDF(report: {
   building_name: string
   building_address: string

@@ -241,7 +241,7 @@ export default function MaintenancePage() {
                         </div>
 
                         <div>
-                          <label className="block text-[9px] text-[#7a7468] mb-1.5" style={{ letterSpacing: '0.15em' }}>MANAGER NOTES</label>
+                          <label className="block text-[9px] text-[#7a7468] mb-1.5" style={{ letterSpacing: '0.15em' }}>LANDLORD NOTES</label>
                           <textarea rows={2} value={edit.manager_notes}
                             onChange={e => setEdit(req.id, 'manager_notes', e.target.value)}
                             placeholder="Internal notes…"

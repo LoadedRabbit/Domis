@@ -22,10 +22,17 @@ export default function PortalPage() {
     if (!isLoaded || !isSignedIn) return
     fetch('/api/tenants/me')
       .then(r => r.json())
-      .then(data => setTenant(data.tenant ?? null))
+      .then(data => {
+        if (!data.tenant) {
+          // If there's a pending invite token, redirect to accept-invite flow
+          const pendingToken = typeof window !== 'undefined' ? localStorage.getItem('pending_invite') : null
+          if (pendingToken) { router.push('/portal/accept-invite'); return }
+        }
+        setTenant(data.tenant ?? null)
+      })
       .catch(() => setTenant(null))
       .finally(() => setLoading(false))
-  }, [isLoaded, isSignedIn])
+  }, [isLoaded, isSignedIn, router])
 
   if (!isLoaded || loading) {
     return (
@@ -42,7 +49,7 @@ export default function PortalPage() {
           <AlertCircle size={24} className="text-[#7a7468] mx-auto mb-4" />
           <h2 className="font-display text-xl font-light text-[#eae6d6] mb-2">Account Not Linked</h2>
           <p className="text-sm text-[#9e9a8c] leading-relaxed">
-            Your account is not linked to a unit. Please contact your property manager to get set up.
+            Your account is not linked to a unit. Please contact your landlord to get set up.
           </p>
         </div>
       </div>

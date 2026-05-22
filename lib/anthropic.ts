@@ -33,6 +33,81 @@ function formatCurrency(amount: number): string {
   }).format(amount)
 }
 
+interface TaxReportProperty {
+  property_id: number
+  property_name: string
+  property_address: string
+  total_income: number
+  expenses: Record<string, number>
+  total_expenses: number
+  net_income_loss: number
+}
+
+export async function generateTaxReport(data: {
+  year: number
+  properties: TaxReportProperty[]
+}): Promise<string> {
+  const apiKey = process.env.ANTHROPIC_API_KEY
+  if (!apiKey) throw new Error('ANTHROPIC_API_KEY environment variable is not set')
+  const anthropic = new Anthropic({ apiKey })
+
+  const propertyBlocks = data.properties.map((p, i) => {
+    const expLines = Object.entries(p.expenses)
+      .filter(([, v]) => v > 0)
+      .map(([k, v]) => `  - ${k.replace(/_/g, ' ')}: ${formatCurrency(v)}`)
+      .join('\n')
+    return `PROPERTY ${i + 1}: ${p.property_name}
+Address: ${p.property_address}
+Total Rental Income: ${formatCurrency(p.total_income)}
+Expenses:
+${expLines || '  (none recorded)'}
+Total Expenses: ${formatCurrency(p.total_expenses)}
+Net Income / (Loss): ${formatCurrency(p.net_income_loss)}`
+  }).join('\n\n')
+
+  const totalIncome = data.properties.reduce((s, p) => s + p.total_income, 0)
+  const totalExpenses = data.properties.reduce((s, p) => s + p.total_expenses, 0)
+  const totalNet = totalIncome - totalExpenses
+
+  const prompt = `You are a CPA preparing a Schedule E tax summary for a landlord.
+
+TAX YEAR: ${data.year}
+PROPERTIES: ${data.properties.length}
+
+${propertyBlocks}
+
+PORTFOLIO TOTALS:
+- Total Income: ${formatCurrency(totalIncome)}
+- Total Expenses: ${formatCurrency(totalExpenses)}
+- Net Income / (Loss): ${formatCurrency(totalNet)}
+
+Write a clear, professional Schedule E summary report using these ## sections:
+## SCHEDULE E SUMMARY — ${data.year}
+## PER-PROPERTY BREAKDOWN
+## EXPENSE DETAIL BY CATEGORY
+## PORTFOLIO TOTALS
+## TAX NOTES
+
+Guidelines per section:
+- SCHEDULE E SUMMARY: 2-3 sentences overview of the year, total income, total expenses, and net.
+- PER-PROPERTY BREAKDOWN: one entry per property with income, expenses, and net clearly labeled.
+- EXPENSE DETAIL BY CATEGORY: aggregate all expenses across properties by category.
+- PORTFOLIO TOTALS: final numbers in a clear tabular-style format.
+- TAX NOTES: 3-5 practical bullet points (depreciation, record-keeping, common deductions landlords miss). End with: "Share this summary with your accountant or use it to complete Schedule E (IRS Form 1040)."
+
+Be specific with dollar amounts. Professional but accessible tone.`
+
+  const stream = anthropic.messages.stream({
+    model: 'claude-sonnet-4-6',
+    max_tokens: 2000,
+    messages: [{ role: 'user', content: prompt }],
+  })
+
+  const message = await stream.finalMessage()
+  const content = message.content[0]
+  return content.type === 'text' ? content.text : ''
+}
+
 export async function generateOwnerReport(data: ReportInput): Promise<string> {
   // Instantiate inside the function so missing env var throws at request time,
   // not at module load time (which would crash the entire serverless function).
@@ -59,7 +134,7 @@ ${data.rentRoll.map(e =>
 Collected: ${formatCurrency(rentRollCollected)} | Outstanding/Partial: ${formatCurrency(rentRollOutstanding)}`
     : 'RENT ROLL: Not provided.'
 
-  const prompt = `You are a property manager writing a monthly owner report. Be concise, specific, and professional.
+  const prompt = `You are a landlord writing a monthly owner report. Be concise, specific, and professional.
 
 ${data.buildingName} | ${data.address} | ${MONTHS[data.month - 1]} ${data.year}
 
@@ -79,7 +154,7 @@ TENANT STATUS:
 OPERATIONS:
 - Maintenance: ${data.maintenanceIssues.trim() || 'None reported.'}
 - Tenant Issues: ${data.tenantIssues.trim() || 'None reported.'}
-- Manager Notes: ${data.notes.trim() || 'None.'}
+- Landlord Notes: ${data.notes.trim() || 'None.'}
 
 NEXT MONTH OUTLOOK: ${data.nextMonthOutlook.trim() || 'No specific items noted.'}
 
@@ -119,10 +194,10 @@ export async function draftCommunicationResponse(input: {
   const anthropic = new Anthropic({ apiKey })
 
   const historyBlock = input.conversationHistory
-    .map(m => `[${m.timestamp}] ${m.role === 'tenant' ? input.tenantName : 'Manager'}: ${m.body}`)
+    .map(m => `[${m.timestamp}] ${m.role === 'tenant' ? input.tenantName : 'Landlord'}: ${m.body}`)
     .join('\n\n')
 
-  const prompt = `You are a professional property manager.
+  const prompt = `You are a professional landlord.
 Draft a professional, empathetic, and clear response to a tenant communication.
 
 TENANT: ${input.tenantName}
@@ -134,9 +209,9 @@ URGENCY: ${input.urgency}
 CONVERSATION HISTORY:
 ${historyBlock}
 
-Write a professional manager response. Be specific, use a helpful and respectful tone.
+Write a professional landlord response. Be specific, use a helpful and respectful tone.
 Do not include greetings like "Dear [Name]" — start directly with the response body.
-3-5 sentences. Sign off with "— Property Management"`
+3-5 sentences. Sign off with "— Your Landlord"`
 
   const stream = anthropic.messages.stream({
     model: 'claude-sonnet-4-6',
@@ -157,7 +232,7 @@ export async function categorizeMaintenanceRequest(input: {
   if (!apiKey) throw new Error('ANTHROPIC_API_KEY environment variable is not set')
   const anthropic = new Anthropic({ apiKey })
 
-  const prompt = `You are a property management AI. Categorize this maintenance request as either "Emergency" or "Routine".
+  const prompt = `You are a rental property AI. Categorize this maintenance request as either "Emergency" or "Routine".
 
 Emergency criteria (any one = Emergency):
 - No heat or air conditioning in extreme weather
@@ -225,7 +300,7 @@ State that the file will be forwarded to legal counsel if payment is not receive
 This should be comprehensive — 4-6 paragraphs. Include a formal letterhead format.`,
   }
 
-  const prompt = `You are drafting a formal rent delinquency notice on behalf of the property management company.
+  const prompt = `You are drafting a formal rent delinquency notice on behalf of the landlord.
 
 NOTICE TYPE: ${noticeLabels[input.noticeType]}
 TENANT: ${input.tenantName}
@@ -240,7 +315,7 @@ ${prevNoticeBlock}
 
 ${typeInstructions[input.noticeType]}
 
-Use formal letter format. Include today's date. Sign as "Property Management — Management Office".`
+Use formal letter format. Include today's date. Sign as "Landlord — Property Management".`
 
   const stream = anthropic.messages.stream({
     model: 'claude-sonnet-4-6',

@@ -286,7 +286,7 @@ export default function PortalMaintenancePage() {
 
                         {req.manager_notes && (
                           <div>
-                            <p className="text-[9px] text-[#7ab4e0] mb-1" style={{ letterSpacing: '0.2em' }}>MANAGER NOTES</p>
+                            <p className="text-[9px] text-[#7ab4e0] mb-1" style={{ letterSpacing: '0.2em' }}>LANDLORD NOTES</p>
                             <p className="text-sm text-[#c8c4b4] leading-relaxed">{req.manager_notes}</p>
                           </div>
                         )}

@@ -95,7 +95,7 @@ export default function PortalThreadPage({ params }: { params: Promise<{ id: str
               <div className={`max-w-[80%] ${isTenant ? 'bg-[#d4b070]/08 border-[#d4b070]/20' : 'bg-[#101210] border-[#222620]'} border rounded-sm px-4 py-3`}>
                 <div className="flex items-center gap-2 mb-2">
                   <span className={`text-[9px] font-medium ${isTenant ? 'text-[#d4b070]' : 'text-[#7ab4e0]'}`} style={{ letterSpacing: '0.2em' }}>
-                    {isTenant ? 'YOU' : 'MANAGER'}
+                    {isTenant ? 'YOU' : 'LANDLORD'}
                   </span>
                   <span className="text-[9px] text-[#7a7468]">
                     {new Date(msg.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}

@@ -3,8 +3,22 @@ export interface Building {
   name: string
   address: string
   total_units: number
+  rent_due_day?: number
   created_at: string
   updated_at: string
+}
+
+export type ExpenseCategory = 'mortgage' | 'insurance' | 'repairs' | 'utilities' | 'taxes' | 'management_fees' | 'other'
+
+export interface Expense {
+  id: string
+  property_id: number
+  date: string
+  amount: number
+  category: ExpenseCategory
+  description: string
+  receipt_url: string
+  created_at: string
 }
 
 export interface Report {
@@ -84,6 +98,8 @@ export interface Tenant {
   lease_start: string | null
   lease_end: string | null
   clerk_user_id: string | null
+  invite_token: string | null
+  invite_accepted_at: string | null
   created_at: string
   updated_at: string
   building?: Building

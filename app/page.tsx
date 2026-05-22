@@ -13,12 +13,20 @@ export default async function Root() {
     let destination = '/dashboard'
     try {
       const supabase = createServerClient()
-      const { data } = await supabase
+      const { data: tenant } = await supabase
         .from('tenants')
         .select('id')
         .eq('clerk_user_id', userId)
         .maybeSingle()
-      if (data) destination = '/portal'
+      if (tenant) {
+        destination = '/portal'
+      } else {
+        // New landlord with no properties → onboarding
+        const { count } = await supabase
+          .from('buildings')
+          .select('id', { count: 'exact', head: true })
+        if ((count ?? 0) === 0) destination = '/onboarding'
+      }
     } catch {
       // supabase error — default to /dashboard
     }
@@ -76,10 +84,10 @@ export default async function Root() {
 
           <div>
             <div className="font-display text-base font-medium text-[#eae6d6] leading-tight mb-2">
-              Manager Access
+              Landlord Access
             </div>
             <div className="text-xs text-[#7a7468] leading-relaxed">
-              Dashboard, owner reports, tenant registry, rent tracking
+              Properties, finances, tenant management, rent tracking
             </div>
           </div>
 
